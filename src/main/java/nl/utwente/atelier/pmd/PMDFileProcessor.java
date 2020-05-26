@@ -5,10 +5,14 @@ import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.util.ClasspathClassLoader;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.ReaderDataSource;
+import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PMDConfiguration;
+import net.sourceforge.pmd.RuleContext;
+import net.sourceforge.pmd.RulePriority;
+import net.sourceforge.pmd.RulesetsFactoryUtils;
 import net.sourceforge.pmd.renderers.Renderer;
 
 import nl.utwente.atelier.exceptions.PMDException;
@@ -25,7 +29,8 @@ public class PMDFileProcessor {
             var config = new PMDConfiguration();
             config.setMinimumPriority(RulePriority.LOW);
             config.setRuleSets("rulesets/processing.xml");
-            var ruleSetFactory = RulesetsFactoryUtils.getRulesetFactory(config);
+            config.setIgnoreIncrementalAnalysis(true);
+            var ruleSetFactory = RulesetsFactoryUtils.createFactory(config);
 
             renderer.start();
 
