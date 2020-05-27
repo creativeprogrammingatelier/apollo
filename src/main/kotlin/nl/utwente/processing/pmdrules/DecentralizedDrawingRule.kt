@@ -38,7 +38,7 @@ class DecentralizedDrawingRule : AbstractJavaRule() {
         if (node.isMethodCall && method != null && method !in this.drawStack) {
             val match = node.matches(*ProcessingApplet.DRAW_METHODS.toTypedArray())
             match?.let {
-                this.addViolationWithMessage(data, node, message, kotlin.arrayOf(match, method.methodName))
+                this.addViolationWithMessage(data, node, message, kotlin.arrayOf(match, method.name))
             }
         }
         return super.visit(node, data)

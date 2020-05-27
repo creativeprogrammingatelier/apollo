@@ -40,7 +40,7 @@ class DecentralizedEventHandlingRule: AbstractJavaRule() {
         if (method != null && method !in this.eventStack) {
             val match = node.matches(*ProcessingApplet.EVENT_GLOBALS.toTypedArray())
             match?.let {
-                this.addViolationWithMessage(data, node, message, kotlin.arrayOf(match, method.methodName))
+                this.addViolationWithMessage(data, node, message, kotlin.arrayOf(match, method.name))
             }
         }
         return super.visit(node, data)

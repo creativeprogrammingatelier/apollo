@@ -26,7 +26,7 @@ class DrawingStateChangeRule: AbstractJavaRule() {
                     if (occurrence is JavaNameOccurrence &&
                             (occurrence.isOnLeftHandSide || occurrence.isSelfAssignment) && method in drawStack) {
                         this.addViolationWithMessage(data, occurrence.location, message,
-                                kotlin.arrayOf(variable.name, method.methodName))
+                                kotlin.arrayOf(variable.name, method.name))
                     }
                 }
             }

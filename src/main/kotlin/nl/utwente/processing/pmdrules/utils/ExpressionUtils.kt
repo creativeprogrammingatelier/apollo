@@ -13,10 +13,10 @@ fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : B
     val argumentNode = this.findChildrenOfType(ASTPrimarySuffix::class.java).stream()
             .filter { s -> s.isArguments }.findFirst().orElse(null) ?: return false
     val argumentList = argumentNode.getFirstDescendantOfType(ASTArgumentList::class.java)
-    return (0..argumentList.jjtGetNumChildren()-1)
+    return (0..argumentList.getNumChildren()-1)
             .filter { method.parameters[it].pixels }
             .map {
-                argumentList.jjtGetChild(it)?.
+                argumentList.getChild(it)?.
                         getFirstChildOfType(ASTPrimaryExpression::class.java)?.
                         getFirstChildOfType(ASTPrimaryPrefix::class.java)?.
                         getFirstChildOfType(ASTLiteral::class.java)
@@ -26,8 +26,7 @@ fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : B
 
 fun ASTPrimaryExpression.matches(method: ProcessingAppletMethod) : Boolean {
     var result = false;
-    check@ for (i in 0..this.jjtGetNumChildren()-1) {
-        val node = this.jjtGetChild(i)
+    check@ for (node in this.children()) {
         when (node) {
             is ASTPrimaryPrefix -> {
                 if (node.usesThisModifier() || node.usesSuperModifier()) {
@@ -51,8 +50,8 @@ fun ASTPrimaryExpression.matches(method: ProcessingAppletMethod) : Boolean {
 
 fun ASTPrimaryExpression.matches(variable: String) : Boolean {
     var result = false
-    check@ for (i in 0..this.jjtGetNumChildren()-1) {
-        val node = this.jjtGetChild(i)
+    check@ for (i in 0..this.getNumChildren()-1) {
+        val node = this.getChild(i)
         when (node) {
             is ASTPrimaryPrefix -> {
                 if (node.usesThisModifier() || node.usesSuperModifier()) {
