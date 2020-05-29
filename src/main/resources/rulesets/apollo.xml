@@ -15,4 +15,13 @@
         </description>
         <priority>3</priority>
     </rule>
+
+    <rule name="LoopReportRule"
+          message="{0}={1}"
+          class="nl.utwente.processing.pmdrules.metrics.loops.LoopReportRule">
+        <description>
+            Loops.
+        </description>
+        <priority>3</priority>
+    </rule>
 </ruleset>
