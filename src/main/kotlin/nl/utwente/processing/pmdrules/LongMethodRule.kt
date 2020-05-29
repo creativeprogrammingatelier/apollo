@@ -15,6 +15,6 @@ class LongMethodRule : AbstractJavaRule() {
         if (ncss > 50.0) {
             this.addViolationWithMessage(data, node, message, kotlin.arrayOf(node.name, ncss))
         }
-        return data
+        return super.visit(node, data)
     }
 }

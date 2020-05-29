@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         name="Processing Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>
+        Rulesets that report metrics
+    </description>
+
+    <rule name="DrawingReportRule"
+          message="{0}={1}"
+          class="nl.utwente.processing.pmdrules.metrics.drawing.DrawingReportRule">
+        <description>
+            Called drawing methods.
+        </description>
+        <priority>3</priority>
+    </rule>
+</ruleset>
