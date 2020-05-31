@@ -4,6 +4,7 @@ import net.sourceforge.pmd.RuleViolation
 import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer
 import nl.utwente.processing.pmdrules.metrics.Metrics
 import nl.utwente.processing.pmdrules.metrics.drawing.DrawingReportRule
+import nl.utwente.processing.pmdrules.metrics.loops.LoopReportRule
 import nl.utwente.processing.pmdrules.metrics.tryParseDescription
 import java.io.Writer
 
@@ -63,5 +64,6 @@ class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
 
         println("\nConclusions:")
         println("Drawing: ${DrawingReportRule.calculateFinal(metrics)}")
+        println("Loops: ${LoopReportRule.calculateFinal(metrics)}")
     }
 }

@@ -2,12 +2,24 @@ package nl.utwente.processing.pmdrules.metrics.loops
 
 abstract class LoopPlan(val type: Type) {
     enum class Type { WHILE, FOR, FOREACH }
+
     abstract fun isAppropriate(): Boolean
 }
 
-class WhilePlan(val conditionType: ConditionType) : LoopPlan(Type.WHILE) {
+data class VariableUse(
+        val image: String,
+        val isInArrayDereference: Boolean,
+        val dereferencedArray: String?,
+        val isInManipulation: Boolean,
+        val inConstantManipulation: Boolean) {
+}
+
+class WhilePlan(val conditionType: ConditionType, val loopingVariables: Set<VariableUse>) : LoopPlan(Type.WHILE) {
     enum class ConditionType {
-        NUMERAL_COMPARISON,
+        NUMERAL_RELATION,
+        RELATION,
+        NUMERAL_EQUALITY,
+        EQUALITY,
         OTHER
     }
 

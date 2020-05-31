@@ -1,5 +1,7 @@
 package nl.utwente.processing.pmdrules.utils
 
+import net.sourceforge.pmd.lang.ast.AbstractNode
+import net.sourceforge.pmd.lang.ast.Node
 import net.sourceforge.pmd.lang.java.ast.*
 import nl.utwente.processing.pmdrules.symbols.ProcessingAppletMethod
 import java.util.*
@@ -9,6 +11,81 @@ val ASTPrimaryExpression.isMethodCall : Boolean
         return this.findChildrenOfType(ASTPrimarySuffix::class.java).stream().filter { s -> s.isArguments }.count() > 0
     }
 
+fun ASTPrimaryExpression.isLiteral() : Boolean {
+    val literal = this.getFirstChildOfType(ASTPrimaryPrefix::class.java)
+            ?.getFirstChildOfType(ASTLiteral::class.java)
+    return literal != null
+}
+
+fun ASTPrimaryExpression.isLambda() : Boolean {
+    val lambda = this.getFirstChildOfType(ASTPrimaryPrefix::class.java)
+            ?.getFirstChildOfType(ASTLambdaExpression::class.java)
+    return lambda != null
+}
+
+fun ASTPrimaryExpression.isLowest() : Boolean {
+    return this.getFirstDescendantOfType(ASTPrimaryExpression::class.java) == null
+}
+
+fun Node.similar(other: Node) : Boolean {
+    return this.numChildren == other.numChildren
+            && this.image == other.image
+            && this.children().zip(other.children()).all { it.first.similar(it.second) }
+}
+
+fun ASTPrimaryExpression.isInDirectArrayDereference() : Boolean {
+    if (this.parent == null) return false
+    val pp = this.parent.parent
+    if (pp !== null && pp is ASTPrimarySuffix)
+        return pp.isArrayDereference
+    return false
+}
+
+fun ASTPrimaryExpression.dereferencedArray() : ASTPrimaryPrefix? {
+    if (!this.isInDirectArrayDereference()) return null
+    return this.parent.parent.parent.getFirstChildOfType(ASTPrimaryPrefix::class.java)
+}
+
+fun ASTPrimaryExpression.isInManipulation() : Boolean {
+    if (this.parent == null) return false
+    return when (this.parent) {
+        is ASTPostfixExpression -> true
+        is ASTPreIncrementExpression -> true
+        is ASTPreDecrementExpression -> true
+        is ASTStatementExpression ->
+            this.parent.getFirstChildOfType(ASTPrimaryExpression::class.java) == this
+            && this.parent.getFirstChildOfType(ASTAssignmentOperator::class.java) != null
+        else -> false
+    }
+}
+
+fun ASTPrimaryExpression.isInConstantManipulation() : Boolean {
+    return this.isInManipulation()
+        && this.parent.findDescendantsOfType(ASTPrimaryExpression::class.java)
+            .all { it.isLiteral() || it.similar(this) }
+}
+
+fun Node.deepImage() : String {
+    val sb = StringBuilder()
+    this.deepImage(sb)
+    return sb.toString()
+}
+
+fun Node.deepImage(sb: StringBuilder) {
+    if (this.image != null) {
+        sb.append(image)
+    } else {
+        for (child in this.children()) child.deepImage(sb)
+    }
+}
+
+fun TypeNode.isNumeral() : Boolean {
+    return this.typeDefinition?.type in listOf(
+            Byte::class.java, Short::class.java,
+            Int::class.java, Long::class.java,
+            Float::class.java, Double::class.java)
+}
+
 fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : Boolean {
     val argumentNode = this.findChildrenOfType(ASTPrimarySuffix::class.java).stream()
             .filter { s -> s.isArguments }.findFirst().orElse(null) ?: return false
@@ -16,12 +93,9 @@ fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : B
     return (0..argumentList.getNumChildren()-1)
             .filter { method.parameters[it].pixels }
             .map {
-                argumentList.getChild(it)?.
-                        getFirstChildOfType(ASTPrimaryExpression::class.java)?.
-                        getFirstChildOfType(ASTPrimaryPrefix::class.java)?.
-                        getFirstChildOfType(ASTLiteral::class.java)
+                argumentList.getChild(it)?.getFirstChildOfType(ASTPrimaryExpression::class.java)
             }
-            .any { it != null };
+            .any { it != null && it.isLiteral() };
 }
 
 fun ASTPrimaryExpression.matches(method: ProcessingAppletMethod) : Boolean {
