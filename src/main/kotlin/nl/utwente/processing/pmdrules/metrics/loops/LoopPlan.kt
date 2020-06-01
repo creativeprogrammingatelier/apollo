@@ -11,7 +11,7 @@ data class VariableUse(
         val isInArrayDereference: Boolean,
         val dereferencedArray: String?,
         val isInManipulation: Boolean,
-        val inConstantManipulation: Boolean) {
+        val isInConstantManipulation: Boolean) {
 }
 
 class WhilePlan(val conditionType: ConditionType, val loopingVariables: Set<VariableUse>) : LoopPlan(Type.WHILE) {
@@ -24,20 +24,31 @@ class WhilePlan(val conditionType: ConditionType, val loopingVariables: Set<Vari
     }
 
     override fun isAppropriate(): Boolean {
-        return true
+        return conditionType != ConditionType.NUMERAL_RELATION
+                || loopingVariables.none { it.isInConstantManipulation }
     }
 }
 
-class ForPlan : LoopPlan(Type.FOR) {
+class ForPlan(val iteratorImage: String?, val conditionType: ConditionType, val iteratorUses: Set<VariableUse>) : LoopPlan(Type.FOR) {
+    enum class ConditionType {
+        ARRAY_LENGTH_RELATION,
+        RELATION,
+        EQUALITY,
+        OTHER
+    }
 
     override fun isAppropriate(): Boolean {
-        return true
+        return iteratorImage != null
+                && (conditionType != ConditionType.ARRAY_LENGTH_RELATION
+                    || iteratorUses.any { !it.isInArrayDereference })
     }
 }
 
 class ForeachPlan() : LoopPlan(Type.FOREACH) {
 
     override fun isAppropriate(): Boolean {
+        // If you use a foreach, then it is most likely the most appropriate,
+        // since there is no more specific type of loop that could be better
         return true
     }
 }

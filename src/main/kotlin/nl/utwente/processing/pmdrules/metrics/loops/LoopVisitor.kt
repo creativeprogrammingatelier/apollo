@@ -18,7 +18,40 @@ class LoopVisitor : JavaParserVisitorAdapter() {
         if (node.isForeach) {
             (data as MutableList<LoopPlan>).add(ForeachPlan())
         } else {
-            (data as MutableList<LoopPlan>).add(ForPlan())
+            val init = node.getFirstDescendantOfType(ASTForInit::class.java)
+            val initVarDecl = init.getFirstDescendantOfType(ASTVariableDeclaratorId::class.java)
+            val initVar =
+                if (initVarDecl != null) {
+                    initVarDecl.deepImage()
+                } else {
+                    val initAssignment = init.getFirstDescendantOfType(ASTStatementExpression::class.java)
+                    if (initAssignment?.getFirstChildOfType(ASTAssignmentOperator::class.java) != null) {
+                        initAssignment.getFirstChildOfType(ASTPrimaryExpression::class.java)?.deepImage()
+                    } else {
+                        null
+                    }
+                }
+            val relation = node.condition.getFirstChildOfType(ASTRelationalExpression::class.java)
+            val conditionType =
+                if (relation != null) {
+                    val names = relation.findDescendantsOfType(ASTPrimaryPrefix::class.java)
+                    val containsArrayLength = names.any { it.deepImage().endsWith(".length") }
+                    if (containsArrayLength)
+                        ForPlan.ConditionType.ARRAY_LENGTH_RELATION
+                    else
+                        ForPlan.ConditionType.RELATION
+                } else {
+                    if (node.condition.getFirstChildOfType(ASTEqualityExpression::class.java) != null)
+                        ForPlan.ConditionType.EQUALITY
+                    else
+                        ForPlan.ConditionType.OTHER
+                }
+            val loopingVariables =
+                    node.body.findDescendantsOfType(ASTPrimaryExpression::class.java)
+                            .filter { it.deepImage() == initVar }
+                            .map { toVariableUse(it) }
+                            .toSet()
+            (data as MutableList<LoopPlan>).add(ForPlan(initVar, conditionType, loopingVariables))
         }
         return super.visit(node, data)
     }

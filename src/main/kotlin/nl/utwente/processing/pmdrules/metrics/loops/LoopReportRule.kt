@@ -19,8 +19,11 @@ class LoopReportRule : AbstractJavaRule() {
         val loopVariety = LoopMetrics.LoopVarietyMetric().computeFor(node, null)
         this.addViolationWithMessage(data, node, message, arrayOf(Metrics.LOOP_VARIETY, loopVariety))
 
-        val situationVarietyMetric = LoopMetrics.LoopSituationVarietyMetric().computeFor(node, null)
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.LOOP_SITUATIONVARIETY, situationVarietyMetric))
+        val situationVariety = LoopMetrics.LoopSituationVarietyMetric().computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.LOOP_SITUATIONVARIETY, situationVariety))
+
+        val assessment = LoopMetrics.LoopAssessmentMetric().computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.LOOP_ASSESSMENT, assessment))
 
         return super.visit(node, data)
     }
