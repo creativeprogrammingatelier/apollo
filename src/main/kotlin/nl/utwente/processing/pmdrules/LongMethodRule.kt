@@ -10,7 +10,7 @@ import net.sourceforge.pmd.lang.metrics.MetricsUtil
  */
 class LongMethodRule : AbstractJavaRule() {
 
-    override fun visit(node: ASTMethodDeclaration, data: Any): Any {
+    override fun visit(node: ASTMethodDeclaration, data: Any?): Any? {
         val ncss = MetricsUtil.computeMetric(JavaOperationMetricKey.NCSS, node)
         if (ncss > 50.0) {
             this.addViolationWithMessage(data, node, message, kotlin.arrayOf(node.name, ncss))

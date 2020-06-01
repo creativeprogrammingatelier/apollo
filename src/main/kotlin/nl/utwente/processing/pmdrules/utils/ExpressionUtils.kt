@@ -89,7 +89,7 @@ fun TypeNode.isNumeral() : Boolean {
 fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : Boolean {
     val argumentNode = this.findChildrenOfType(ASTPrimarySuffix::class.java).stream()
             .filter { s -> s.isArguments }.findFirst().orElse(null) ?: return false
-    val argumentList = argumentNode.getFirstDescendantOfType(ASTArgumentList::class.java)
+    val argumentList = argumentNode.getFirstDescendantOfType(ASTArgumentList::class.java) ?: return false
     return (0..argumentList.getNumChildren()-1)
             .filter { method.parameters[it].pixels }
             .map {
