@@ -24,4 +24,13 @@
         </description>
         <priority>3</priority>
     </rule>
+
+    <rule name="OoReportRule"
+          message="{0}={1}"
+          class="nl.utwente.processing.pmdrules.metrics.oo.OoReportRule">
+        <description>
+            OO.
+        </description>
+        <priority>3</priority>
+    </rule>
 </ruleset>
