@@ -11,5 +11,7 @@ enum class Metrics {
 
     OO_RAW_CLASSCOUNT,
     OO_CLASSCOUNT,
-    OO_SMELLS
+    OO_SMELLS,
+
+    MESSAGEPASSING_RATIO
 }

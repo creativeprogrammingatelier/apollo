@@ -86,6 +86,18 @@ fun TypeNode.isNumeral() : Boolean {
             Float::class.java, Double::class.java)
 }
 
+fun <T> Node.getFirstAncestorOfType(ancestorType: Class<T>): T? {
+    var current = this.parent
+    while (current != null && !ancestorType.isAssignableFrom(current.javaClass)) {
+        current = current.parent
+    }
+    return ancestorType.cast(current)
+}
+
+fun Node.getContainingClass() : ASTClassOrInterfaceDeclaration? {
+    return this.getFirstAncestorOfType(ASTClassOrInterfaceDeclaration::class.java)
+}
+
 fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : Boolean {
     val argumentNode = this.findChildrenOfType(ASTPrimarySuffix::class.java).stream()
             .filter { s -> s.isArguments }.findFirst().orElse(null) ?: return false

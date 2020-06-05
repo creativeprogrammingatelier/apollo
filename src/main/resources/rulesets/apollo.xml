@@ -35,4 +35,13 @@
         </description>
         <priority>3</priority>
     </rule>
+
+    <rule name="MessagePassingReportRule"
+          message="{0}={1}"
+          class="nl.utwente.processing.pmdrules.metrics.messagepassing.MessagePassingReportRule">
+        <description>
+            Message Passing.
+        </description>
+        <priority>3</priority>
+    </rule>
 </ruleset>

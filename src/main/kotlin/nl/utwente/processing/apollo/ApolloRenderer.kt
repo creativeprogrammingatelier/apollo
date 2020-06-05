@@ -5,6 +5,7 @@ import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer
 import nl.utwente.processing.pmdrules.metrics.Metrics
 import nl.utwente.processing.pmdrules.metrics.drawing.DrawingReportRule
 import nl.utwente.processing.pmdrules.metrics.loops.LoopReportRule
+import nl.utwente.processing.pmdrules.metrics.messagepassing.MessagePassingReportRule
 import nl.utwente.processing.pmdrules.metrics.oo.OoMetrics
 import nl.utwente.processing.pmdrules.metrics.oo.OoReportRule
 import nl.utwente.processing.pmdrules.metrics.tryParseDescription
@@ -73,5 +74,6 @@ class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
         println("Drawing: ${DrawingReportRule.calculateFinal(metrics)}")
         println("Loops: ${LoopReportRule.calculateFinal(metrics)}")
         println("OO: ${OoReportRule.calculateFinal(metrics)}")
+        println("Message passing: ${MessagePassingReportRule.calculateFinal(metrics)}")
     }
 }

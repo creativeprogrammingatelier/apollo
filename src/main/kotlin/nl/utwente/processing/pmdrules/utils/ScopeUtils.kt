@@ -5,8 +5,10 @@ import net.sourceforge.pmd.lang.java.ast.ASTMethodDeclaration
 import net.sourceforge.pmd.lang.java.symboltable.ClassScope
 import net.sourceforge.pmd.lang.java.symboltable.MethodNameDeclaration
 import net.sourceforge.pmd.lang.java.symboltable.SourceFileScope
+import net.sourceforge.pmd.lang.symboltable.NameDeclaration
 import net.sourceforge.pmd.lang.symboltable.NameOccurrence
 import net.sourceforge.pmd.lang.symboltable.Scope
+import net.sourceforge.pmd.lang.symboltable.ScopedNode
 import java.util.stream.Collectors
 
 /**
@@ -20,6 +22,16 @@ val Scope.isPartOfTopClassScope : Boolean
         }
         return current.parent is SourceFileScope
     }
+
+fun Scope.findDeclaration(node: ScopedNode): NameDeclaration? {
+    val matches = this.declarations.filter { it.value.any { usage -> usage.location == node } }
+    if (matches.isEmpty()) {
+        if (this.parent == null) return null
+        else return this.parent.findDeclaration(node)
+    } else {
+        return matches.keys.first()
+    }
+}
 
 /**
  * Extension method which returns a map of callers mapped to callee's.
