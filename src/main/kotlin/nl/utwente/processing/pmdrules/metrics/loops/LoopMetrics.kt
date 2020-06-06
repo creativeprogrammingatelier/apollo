@@ -4,7 +4,7 @@ import net.sourceforge.pmd.lang.java.ast.ASTCompilationUnit
 import net.sourceforge.pmd.lang.java.metrics.AbstractJavaMetric
 import net.sourceforge.pmd.lang.metrics.MetricOptions
 import nl.utwente.processing.pmdrules.metrics.s
-import kotlin.math.max
+import kotlin.math.min
 
 class LoopMetrics {
     companion object {
@@ -45,7 +45,7 @@ class LoopMetrics {
                             it.iteratorUses.any { it.isInManipulation }) }
                         .count()
             val foreachCount =
-                max(1, loops.filterIsInstance<ForeachPlan>().count())
+                min(1, loops.filterIsInstance<ForeachPlan>().count())
             return s(3.0, 1.5, (whileCount + forCount + foreachCount).toDouble())
         }
     }
@@ -57,7 +57,10 @@ class LoopMetrics {
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
             val loops = getLoops(node)
-            return loops.count { it.isAppropriate() }.toDouble() / loops.count().toDouble()
+            return if (loops.isEmpty())
+                0.0
+            else
+                loops.count { it.isAppropriate() }.toDouble() / loops.count().toDouble()
         }
     }
 }
