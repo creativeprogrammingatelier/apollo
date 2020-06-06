@@ -1,6 +1,5 @@
 package nl.utwente.processing.pmdrules.utils
 
-import net.sourceforge.pmd.lang.ast.AbstractNode
 import net.sourceforge.pmd.lang.ast.Node
 import net.sourceforge.pmd.lang.java.ast.*
 import nl.utwente.processing.pmdrules.symbols.ProcessingAppletMethod
@@ -86,16 +85,8 @@ fun TypeNode.isNumeral() : Boolean {
             Float::class.java, Double::class.java)
 }
 
-fun <T> Node.getFirstAncestorOfType(ancestorType: Class<T>): T? {
-    var current = this.parent
-    while (current != null && !ancestorType.isAssignableFrom(current.javaClass)) {
-        current = current.parent
-    }
-    return ancestorType.cast(current)
-}
-
 fun Node.getContainingClass() : ASTClassOrInterfaceDeclaration? {
-    return this.getFirstAncestorOfType(ASTClassOrInterfaceDeclaration::class.java)
+    return this.getFirstParentOfType(ASTClassOrInterfaceDeclaration::class.java)
 }
 
 fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : Boolean {

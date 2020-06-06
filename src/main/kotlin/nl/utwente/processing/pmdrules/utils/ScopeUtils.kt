@@ -6,7 +6,6 @@ import net.sourceforge.pmd.lang.java.symboltable.ClassNameDeclaration
 import net.sourceforge.pmd.lang.java.symboltable.ClassScope
 import net.sourceforge.pmd.lang.java.symboltable.MethodNameDeclaration
 import net.sourceforge.pmd.lang.java.symboltable.SourceFileScope
-import net.sourceforge.pmd.lang.symboltable.NameDeclaration
 import net.sourceforge.pmd.lang.symboltable.NameOccurrence
 import net.sourceforge.pmd.lang.symboltable.Scope
 import net.sourceforge.pmd.lang.symboltable.ScopedNode
@@ -24,46 +23,16 @@ val Scope.isPartOfTopClassScope : Boolean
         return current.parent is SourceFileScope
     }
 
-fun Scope.findDeclaration(node: ScopedNode): NameDeclaration? {
-    val matches = this.declarations.filter { it.value.any { usage -> usage.location == node } }
-    if (matches.isEmpty()) {
-        if (this.parent == null) return null
-        else return this.parent.findDeclaration(node)
-    } else {
-        return matches.keys.first()
-    }
-}
-
-fun Scope.getTopLevelScope() : Scope {
-    var current = this
-    while (current.parent != null) {
-        current = current.parent
-    }
-    return current
-}
-
-fun Scope.findDeclarationDown(node: ScopedNode): NameDeclaration? {
-    return this.findDeclarationDown(node, NameDeclaration::class.java)
-}
-
-fun <T> Scope.findDeclarationDown(node: ScopedNode, type: Class<T>): T? {
+fun <T> Scope.findDeclaration(node: ScopedNode, type: Class<T>): T? {
     val matches = this.declarations
-            .filterKeys { type.isAssignableFrom(it.javaClass) }
+            .filterKeys { type.isAssignableFrom(type) }
             .filter { it.value.any { usage -> usage.location == node } }
     if (matches.isEmpty()) {
-        return this.declarations.keys
-                .filterIsInstance<ClassNameDeclaration>()
-                .map { it.scope.findDeclarationDown(node, type) }
-                .firstOrNull { it != null }
+        if (this.parent == null) return null
+        else return this.parent.findDeclaration(node, type)
     } else {
         return type.cast(matches.keys.first())
     }
-}
-
-fun Scope.findMethodCalls(): List<NameOccurrence> {
-    val calls = this.declarations.filterKeys { it is MethodNameDeclaration }.values.flatten()
-    val subcalls = this.declarations.keys.filterIsInstance<ClassNameDeclaration>().map { it.scope.findMethodCalls() }.flatten()
-    return calls + subcalls
 }
 
 /**

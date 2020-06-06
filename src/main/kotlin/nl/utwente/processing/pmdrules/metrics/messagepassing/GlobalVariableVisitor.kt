@@ -6,7 +6,6 @@ import net.sourceforge.pmd.lang.java.ast.ASTPrimaryExpression
 import net.sourceforge.pmd.lang.java.ast.JavaParserVisitorAdapter
 import net.sourceforge.pmd.lang.java.symboltable.VariableNameDeclaration
 import nl.utwente.processing.pmdrules.utils.getContainingClass
-import nl.utwente.processing.pmdrules.utils.getFirstAncestorOfType
 import nl.utwente.processing.pmdrules.utils.isInManipulation
 import nl.utwente.processing.pmdrules.utils.isMethodCall
 
@@ -24,7 +23,7 @@ class GlobalVariableVisitor : JavaParserVisitorAdapter() {
                 // for "fridge communication"
                 .filter { it.value.any {
                     // Get the primary expression the variable was used in
-                    val primExpr = it.location.getFirstAncestorOfType(ASTPrimaryExpression::class.java)
+                    val primExpr = it.location.getFirstParentOfType(ASTPrimaryExpression::class.java)
                     // Include this var if it is manipulated or a method is called on it (potentially mutating it)
                     primExpr?.isInManipulation() ?: false || primExpr?.isMethodCall ?: false } }
         // The number of keys is the number of mutated global variables
