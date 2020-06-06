@@ -15,7 +15,8 @@ class MessagePassingMetrics {
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
             val (_, globalVarUsageCount) = node.jjtAccept(GlobalVariableVisitor(), null) as Pair<Int, Int>
             val parameterPassCount = node.jjtAccept(ParameterPassingVisitor(), MutableInt(0)) as MutableInt
-            return parameterPassCount.value.toDouble() / (parameterPassCount.value + globalVarUsageCount)
+            val total = parameterPassCount.value + globalVarUsageCount
+            return if (total == 0) 0.0 else parameterPassCount.value.toDouble() / total
         }
     }
 }

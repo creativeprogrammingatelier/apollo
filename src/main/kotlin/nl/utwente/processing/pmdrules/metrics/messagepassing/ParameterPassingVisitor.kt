@@ -1,6 +1,7 @@
 package nl.utwente.processing.pmdrules.metrics.messagepassing
 
 import net.sourceforge.pmd.lang.java.ast.*
+import net.sourceforge.pmd.lang.java.symboltable.MethodNameDeclaration
 import nl.utwente.processing.pmdrules.utils.*
 import org.apache.commons.lang3.mutable.MutableInt
 
@@ -8,15 +9,12 @@ class ParameterPassingVisitor : JavaParserVisitorAdapter() {
     override fun visit(node: ASTPrimaryExpression, data: Any?): Any? {
         // We're only interested in method calls
         if (node.isMethodCall) {
-            // The method name is the last part of the PrimaryPrefix
-            // TODO: this is the full object.methodName thing
-            val methodName = node.getFirstChildOfType(ASTPrimaryPrefix::class.java)
-                    .findChildrenOfType(ASTName::class.java)
-                    .last()
-            // Method calls to methods defined in the program we're looking at
-            // TODO: this doesn't actually get the method declaration, but the object variable
-            val declaration = node.scope.findDeclaration(methodName)
-            // And only if the method was defined in a different class
+            // First get the name part of the the method call
+            val callName = node.getFirstDescendantOfType(ASTName::class.java)
+            // Find the declaration for this method in any class in the current program
+            val declaration = node.scope.getTopLevelScope().findDeclarationDown(callName, MethodNameDeclaration::class.java)
+            // We are only interested in methods defined in this program, and
+            // only if the method was defined in a different class
             if (declaration != null && declaration.node.getContainingClass() != node.getContainingClass()) {
                 // Get the argument node for this method call
                 val argumentNode = node.findChildrenOfType(ASTPrimarySuffix::class.java).stream()
