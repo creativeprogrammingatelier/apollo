@@ -36,8 +36,11 @@ class OoMetrics {
                     "DrawingStateChangeRule", "GodClassRule", "LongMethodRule", "StatelessClassRule")
         }
 
-        fun compute(classCount: Double, violations: List<RuleViolation>) : Double {
-            val count = violations.filter { it.rule.name in OO_RULES }.count()
+        fun computeFor(violations: List<RuleViolation>) : Double {
+            return violations.filter { it.rule.name in OO_RULES }.count().toDouble()
+        }
+
+        fun computeProbability(classCount: Double, count: Double): Double {
             return 1 / max(1.0, count / sqrt(classCount))
         }
     }

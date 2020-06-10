@@ -21,7 +21,11 @@ class LoopMetrics {
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
             val loops = getLoops(node)
-            return s(1.0, 3.0, loops.map {it.type}.toSet().size.toDouble())
+            return loops.map {it.type}.toSet().size.toDouble()
+        }
+
+        fun computeProbability(loopTypeCount: Double): Double {
+            return return s(1.0, 3.0, loopTypeCount)
         }
     }
 
@@ -46,7 +50,11 @@ class LoopMetrics {
                         .count()
             val foreachCount =
                 min(1, loops.filterIsInstance<ForeachPlan>().count())
-            return s(3.0, 1.5, (whileCount + forCount + foreachCount).toDouble())
+            return (whileCount + forCount + foreachCount).toDouble()
+        }
+
+        fun computeProbability(situationCount: Double): Double {
+            return s(3.0, 1.5, situationCount)
         }
     }
 

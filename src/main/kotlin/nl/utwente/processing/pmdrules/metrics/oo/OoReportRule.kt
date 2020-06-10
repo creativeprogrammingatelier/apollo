@@ -9,7 +9,7 @@ class OoReportRule : AbstractJavaRule() {
     companion object {
         fun calculateFinal(metrics: Map<Metrics, Double>) : Double {
             return weightedAverage(
-                    Pair(1.0, metrics[Metrics.OO_CLASSCOUNT]),
+                    Pair(1.0, metrics[Metrics.OO_CLASS_COUNT]),
                     Pair(1.0, metrics[Metrics.OO_SMELLS])
             )
         }
@@ -18,8 +18,8 @@ class OoReportRule : AbstractJavaRule() {
     override fun visit(node: ASTCompilationUnit, data: Any?): Any? {
         val metric = OoMetrics.ClassCountMetric()
         val classCount = metric.computeFor(node, null)
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.OO_RAW_CLASSCOUNT, classCount))
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.OO_CLASSCOUNT, metric.computeProbability(classCount)))
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.OO_RAW_CLASS_COUNT, classCount))
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.OO_CLASS_COUNT, metric.computeProbability(classCount)))
 
         return super.visit(node, data)
     }

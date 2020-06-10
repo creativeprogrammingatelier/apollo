@@ -32,8 +32,11 @@ class DrawingMetrics {
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            val coveredDrawCalls = getDrawCalls(node).filter { it.category in coveredCategories }
-            return coveredDrawCalls.size.toDouble() / coveredMethods.size.toDouble()
+            return getDrawCalls(node).filter { it.category in coveredCategories }.size.toDouble()
+        }
+
+        fun computeProbability(coveredDrawCalls: Double): Double {
+            return coveredDrawCalls / coveredMethods.size.toDouble()
         }
     }
 
@@ -43,8 +46,11 @@ class DrawingMetrics {
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            val advancedDrawCalls = getDrawCalls(node).filter { it.category in advancedCoveredCategories }
-            return s(70.0, 3.0, advancedDrawCalls.size.toDouble())
+            return getDrawCalls(node).filter { it.category in advancedCoveredCategories }.size.toDouble()
+        }
+
+        fun computeProbability(advancedDrawCalls: Double): Double {
+            return s(70.0, 3.0, advancedDrawCalls)
         }
     }
 
@@ -54,8 +60,11 @@ class DrawingMetrics {
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            val uncoveredDrawCalls = getDrawCalls(node).filter { it.category in uncoveredCategories }
-            return uncoveredDrawCalls.size.toDouble() / uncoveredMethods.size.toDouble()
+            return getDrawCalls(node).filter { it.category in uncoveredCategories }.size.toDouble()
+        }
+
+        fun computeProbability(uncoveredDrawCalls: Double): Double {
+            return uncoveredDrawCalls / uncoveredMethods.size.toDouble()
         }
     }
 }

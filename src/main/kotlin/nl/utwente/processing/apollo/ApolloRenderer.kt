@@ -53,7 +53,9 @@ class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
     override fun end() {
         // Final calculations
         val ooSmellMetric = OoMetrics.SmellMetric()
-        metrics[Metrics.OO_SMELLS] = ooSmellMetric.compute(metrics[Metrics.OO_RAW_CLASSCOUNT]!!, violations)
+        metrics[Metrics.OO_RAW_SMELL_COUNT] = ooSmellMetric.computeFor(violations)
+        metrics[Metrics.OO_SMELLS] = ooSmellMetric.computeProbability(
+                metrics[Metrics.OO_RAW_CLASS_COUNT]!!, metrics[Metrics.OO_RAW_SMELL_COUNT]!!)
 
         // Reporting
         for (err in errors) {

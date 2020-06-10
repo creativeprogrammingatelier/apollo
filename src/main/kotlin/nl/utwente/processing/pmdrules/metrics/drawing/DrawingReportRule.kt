@@ -17,14 +17,23 @@ class DrawingReportRule : AbstractJavaRule() {
     }
 
     override fun visit(node: ASTCompilationUnit, data: Any?): Any? {
-        val usedDrawings = DrawingMetrics.UsedDrawingsMetric().computeFor(node, null)
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_USED, usedDrawings))
+        val usedDrawingsMetric = DrawingMetrics.UsedDrawingsMetric()
+        val usedDrawings = usedDrawingsMetric.computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_RAW_COVERED_COUNT, usedDrawings))
+        val usedDrawingsProb = usedDrawingsMetric.computeProbability(usedDrawings)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_USED, usedDrawingsProb))
 
-        val advancedDrawings = DrawingMetrics.AdvancedDrawingsMetric().computeFor(node, null)
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_ADVANCED, advancedDrawings))
+        val advancedDrawingsMetric = DrawingMetrics.AdvancedDrawingsMetric()
+        val advancedDrawings = advancedDrawingsMetric.computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_RAW_ADVANCED_COUNT, advancedDrawings))
+        val advancedDrawingsProb = advancedDrawingsMetric.computeProbability(advancedDrawings)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_ADVANCED, advancedDrawingsProb))
 
-        val uncoveredDrawings = DrawingMetrics.UncoveredDrawingsMetric().computeFor(node, null)
-        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_UNCOVERED, uncoveredDrawings))
+        val uncoveredDrawingsMetric = DrawingMetrics.UncoveredDrawingsMetric()
+        val uncoveredDrawings = uncoveredDrawingsMetric.computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_RAW_UNCOVERED_COUNT, uncoveredDrawings))
+        val uncoveredDrawingsProb = uncoveredDrawingsMetric.computeProbability(uncoveredDrawings)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.DRAWING_UNCOVERED, uncoveredDrawingsProb))
 
         return super.visit(node, data)
     }
