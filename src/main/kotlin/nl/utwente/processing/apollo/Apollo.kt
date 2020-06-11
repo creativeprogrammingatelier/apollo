@@ -6,6 +6,11 @@ import net.sourceforge.pmd.util.datasource.DataSource
 import net.sourceforge.pmd.util.datasource.ReaderDataSource
 import nl.utwente.atelier.pmd.PMDFile
 import nl.utwente.processing.ProcessingProject
+import nl.utwente.processing.pmdrules.metrics.Metrics
+import nl.utwente.processing.pmdrules.metrics.drawing.DrawingReportRule
+import nl.utwente.processing.pmdrules.metrics.loops.LoopReportRule
+import nl.utwente.processing.pmdrules.metrics.messagepassing.MessagePassingReportRule
+import nl.utwente.processing.pmdrules.metrics.oo.OoReportRule
 import java.io.StringReader
 import java.nio.file.Files
 import java.nio.file.Path
@@ -24,32 +29,55 @@ fun main(args: Array<String>) {
                 .map {p -> PMDFile(p.fileName.toString(), p.fileName.toString(), Files.readString(p)) }
                 .collect(Collectors.toList()))
 
-    val config = PMDConfiguration()
-    config.minimumPriority = RulePriority.LOW
-    config.ruleSets = "rulesets/apollo.xml"
-    config.isIgnoreIncrementalAnalysis = true
-    val ruleSetFactory = RulesetsFactoryUtils.createFactory(config)
+    val runner = ApolloPMDRunner()
+    val metrics = runner.run(project)
 
-    val renderer = ApolloRenderer()
-    renderer.start()
-
-    val datasources: List<DataSource> = listOf(
-            ReaderDataSource(StringReader(project.getJavaProjectCode()), "Processing.pde")
-    )
-
-    try {
-        PMD.processFiles(
-                config,
-                ruleSetFactory,
-                datasources,
-                RuleContext(), listOf(renderer))
-    } finally {
-        val auxiliaryClassLoader = config.classLoader
-        if (auxiliaryClassLoader is ClasspathClassLoader) {
-            auxiliaryClassLoader.close()
-        }
+    // Reporting
+    println("Metrics:")
+    for ((metric, value) in metrics) {
+        println(" - $metric = $value")
     }
 
-    renderer.end()
-    renderer.flush()
+    println("\nConclusions:")
+    println("Drawing: ${DrawingReportRule.calculateFinal(metrics)}")
+    println("Loops: ${LoopReportRule.calculateFinal(metrics)}")
+    println("OO: ${OoReportRule.calculateFinal(metrics)}")
+    println("Message passing: ${MessagePassingReportRule.calculateFinal(metrics)}")
+}
+
+class ApolloPMDRunner() {
+    private val config = PMDConfiguration()
+    init {
+        config.minimumPriority = RulePriority.LOW
+        config.ruleSets = "rulesets/apollo.xml"
+        config.isIgnoreIncrementalAnalysis = true
+    }
+
+    private val ruleSetFactory = RulesetsFactoryUtils.createFactory(config)
+
+    fun run(project: ProcessingProject): Map<Metrics, Double> {
+        val renderer = ApolloRenderer()
+        renderer.start()
+
+        val datasources: List<DataSource> = listOf(
+                ReaderDataSource(StringReader(project.getJavaProjectCode()), "Processing.pde")
+        )
+
+        try {
+            PMD.processFiles(
+                    config,
+                    ruleSetFactory,
+                    datasources,
+                    RuleContext(), listOf(renderer))
+        } finally {
+            val auxiliaryClassLoader = config.classLoader
+            if (auxiliaryClassLoader is ClasspathClassLoader) {
+                auxiliaryClassLoader.close()
+            }
+        }
+
+        renderer.end()
+        renderer.flush()
+        return renderer.metrics
+    }
 }

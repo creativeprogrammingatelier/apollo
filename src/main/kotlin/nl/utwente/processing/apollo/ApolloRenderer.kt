@@ -1,5 +1,6 @@
 package nl.utwente.processing.apollo
 
+import net.sourceforge.pmd.Report
 import net.sourceforge.pmd.RuleViolation
 import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer
 import nl.utwente.processing.pmdrules.metrics.Metrics
@@ -15,7 +16,11 @@ import java.io.Writer
 class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
 
     val metrics = mutableMapOf<Metrics, Double>()
-    val violations = mutableListOf<RuleViolation>()
+    private val violations = mutableListOf<RuleViolation>()
+
+    fun getErrors(): List<Report.ProcessingError> {
+        return this.errors.toList()
+    }
 
     override fun defaultFileExtension(): String {
         return "";
@@ -45,8 +50,6 @@ class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
             } else {
                 violations.add(violation)
             }
-
-            println("Violation: ${violation.rule.name} - ${violation.description}")
         }
     }
 
@@ -56,26 +59,5 @@ class ApolloRenderer() : AbstractIncrementingRenderer("Apollo", "") {
         metrics[Metrics.OO_RAW_SMELL_COUNT] = ooSmellMetric.computeFor(violations)
         metrics[Metrics.OO_SMELLS] = ooSmellMetric.computeProbability(
                 metrics[Metrics.OO_RAW_CLASS_COUNT]!!, metrics[Metrics.OO_RAW_SMELL_COUNT]!!)
-
-        // Reporting
-        for (err in errors) {
-            println("Error: ${err.msg}\n${err.detail.lines().map { "\t" + it }.joinToString("\n")}")
-        }
-
-        println("Violations:")
-        for (violation in violations) {
-            println(" - ${violation.rule.name}: ${violation.description}")
-        }
-
-        println("Metrics:")
-        for ((metric, value) in metrics) {
-            println(" - $metric = $value")
-        }
-
-        println("\nConclusions:")
-        println("Drawing: ${DrawingReportRule.calculateFinal(metrics)}")
-        println("Loops: ${LoopReportRule.calculateFinal(metrics)}")
-        println("OO: ${OoReportRule.calculateFinal(metrics)}")
-        println("Message passing: ${MessagePassingReportRule.calculateFinal(metrics)}")
     }
 }
