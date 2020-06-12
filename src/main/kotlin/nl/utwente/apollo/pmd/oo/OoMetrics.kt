@@ -41,7 +41,8 @@ class OoMetrics {
         }
 
         fun computeProbability(classCount: Double, count: Double): Double {
-            return s(0.11, -3.21, count / classCount)
+            return if (classCount == 0.0) 0.0
+            else s(0.11, -3.21, count / classCount)
         }
     }
 }
