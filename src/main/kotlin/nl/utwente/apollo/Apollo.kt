@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 import kotlin.math.roundToInt
 
 object Apollo {
-    fun verbalize(probability: Double, includeNumeral: Boolean = false): String {
+    @JvmStatic fun verbalize(probability: Double, includeNumeral: Boolean = false): String {
         val word = when {
             probability <= 0.20  -> "improbable"
             probability <= 0.375 -> "uncertain"
@@ -30,7 +30,7 @@ object Apollo {
             word
     }
 
-    fun formatResults(metrics: Map<Metrics, Double>, includeNumeral: Boolean = false): String {
+    @JvmStatic fun formatResults(metrics: Map<Metrics, Double>, includeNumeral: Boolean = false): String {
         val s = StringBuilder()
         s.appendln("Based on this submission, Apollo thinks it is")
 
@@ -52,30 +52,29 @@ object Apollo {
 
         return s.toString()
     }
-}
 
-fun main(args: Array<String>) {
-    if (args.size < 1) {
-        println("Usage: <project path>")
-        return
+    @JvmStatic fun main(args: Array<String>) {
+        if (args.size < 1) {
+            println("Usage: <project path>")
+            return
+        }
+
+        val path = Path.of(args[0])
+        val project = ProcessingProject(
+            Files.find(path, 6, BiPredicate { p, attr -> attr.isRegularFile && p.fileName.toString().endsWith(".pde") })
+                    .map {p -> ProcessingFile(p.fileName.toString(), p.fileName.toString(), Files.readString(p)) }
+                    .collect(Collectors.toList()))
+
+        val runner = ApolloPMDRunner()
+        val metrics = runner.run(project)
+
+        // Reporting
+        println("Metrics:")
+        for ((metric, value) in metrics) {
+            println(" - $metric = $value")
+        }
+
+        println("\nConclusions:")
+        print(Apollo.formatResults(metrics, true))
     }
-
-    val path = Path.of(args[0])
-    val project = ProcessingProject(
-        Files.find(path, 6, BiPredicate { p, attr -> attr.isRegularFile && p.fileName.toString().endsWith(".pde") })
-                .map {p -> ProcessingFile(p.fileName.toString(), p.fileName.toString(), Files.readString(p)) }
-                .collect(Collectors.toList()))
-
-    val runner = ApolloPMDRunner()
-    val metrics = runner.run(project)
-
-    // Reporting
-    println("Metrics:")
-    for ((metric, value) in metrics) {
-        println(" - $metric = $value")
-    }
-
-    println("\nConclusions:")
-    print(Apollo.formatResults(metrics, true))
 }
-

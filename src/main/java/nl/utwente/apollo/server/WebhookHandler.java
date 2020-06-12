@@ -2,6 +2,8 @@ package nl.utwente.apollo.server;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import nl.utwente.apollo.Apollo;
+import nl.utwente.apollo.pmd.ApolloPMDRunner;
 import nl.utwente.atelier.api.AtelierAPI;
 import nl.utwente.atelier.exceptions.CryptoException;
 import nl.utwente.atelier.pmd.AtelierPMDRenderer;
@@ -15,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -26,7 +29,7 @@ import java.util.stream.StreamSupport;
 public class WebhookHandler {
     private final String webhookSecret;
     private final AtelierAPI api;
-    private final PMDRunner pmd = new PMDRunner();
+    private final ApolloPMDRunner pmd = new ApolloPMDRunner();
 
     public WebhookHandler(Configuration config, AtelierAPI api) {
         this.webhookSecret = config.getWebhookSecret();
@@ -92,9 +95,6 @@ public class WebhookHandler {
                     case "submission":
                         handleSubmission(payload);
                         break;
-                    case "submission.file":
-                        handleFileSubmission(payload);
-                        break;
                 }
                 response.setStatus(200);
             } catch (InvalidWebhookRequest e) {
@@ -112,7 +112,7 @@ public class WebhookHandler {
     }
 
     /** Handle events of type 'submission' */
-    private void handleSubmission(JsonObject submission) throws CryptoException, IOException, PMDException {
+    private void handleSubmission(JsonObject submission) throws IOException, CryptoException, PMDException {
         var submissionID = submission.get("ID").getAsString();
         System.out.printf("Handling submission %s%n", submissionID);
         try {
@@ -138,32 +138,36 @@ public class WebhookHandler {
                 })
                 .collect(Collectors.toList());
             var project = new ProcessingProject(files);
-            var renderer = new AtelierPMDRenderer(submissionID, project, api);
-            pmd.Run(project, renderer);
-        } catch (RuntimeException ex) {
 
-        }
-    }
+            var metrics = pmd.run(project);
+            var message =
+                    Apollo.formatResults(metrics, false)
+                    + "\nPlease reply with +1 if you think this is correct, or -1 if you don't. If you have time, please explain why!";
 
-    /** Handle events of type 'submission.file' */
-    private void handleFileSubmission(JsonObject file) throws CryptoException, IOException, PMDException {
-        var fileName = file.get("name").getAsString();
-        // We only handle processing files, so restrict to those
-        if (fileName.endsWith(".pde")) {
-            var fileID = file.get("ID").getAsString();
-            var submissionID = file.get("references").getAsJsonObject().get("submissionID").getAsString();
-            System.out.printf("Processing %s (ID: %s)%n", fileName, fileID);
+            var comment = new JsonObject();
 
-            var res = api.getFile(fileID);
-            if (res.getStatusLine().getStatusCode() < 400) {
-                var fileContent = new String(res.getEntity().getContent().readAllBytes());
-                var files = Collections.singletonList(new ProcessingFile(fileID, fileName, fileContent));
-                var project = new ProcessingProject(files);
-                var renderer = new AtelierPMDRenderer(submissionID, project, api);
-                pmd.Run(project, renderer);
+            comment.addProperty("submissionID", submissionID);
+            comment.addProperty("visibility", "private");
+            comment.addProperty("comment", message);
+
+            var res = api.postProjectComment(submissionID, comment);
+            if (res.getStatusLine().getStatusCode() == 200) {
+                var resJson = JsonParser.parseReader(new InputStreamReader(res.getEntity().getContent()));
+                var threadID = resJson.getAsJsonObject().get("ID").getAsString();
+                System.out.println("Made comment " + threadID + " for Apollo results");
             } else {
-                System.out.printf("Request for file %s returned status %d.", fileID, res.getStatusLine().getStatusCode());
+                System.out.println("Request to make comment failed. Got status " + res.getStatusLine().getStatusCode());
             }
+        } catch (RuntimeException ex) {
+            var cause = ex.getCause();
+            if (cause instanceof IOException)
+                throw (IOException) cause;
+            else if (cause instanceof CryptoException)
+                throw (CryptoException) cause;
+            else if (cause instanceof PMDException)
+                throw (PMDException) cause;
+            else
+                throw ex;
         }
     }
 }
