@@ -1,6 +1,10 @@
 package nl.utwente.apollo
 
 import nl.utwente.apollo.pmd.ApolloPMDRunner
+import nl.utwente.apollo.pmd.drawing.DrawingReportRule
+import nl.utwente.apollo.pmd.loops.LoopReportRule
+import nl.utwente.apollo.pmd.messagepassing.MessagePassingReportRule
+import nl.utwente.apollo.pmd.oo.OoReportRule
 import nl.utwente.processing.ProcessingFile
 import nl.utwente.processing.ProcessingProject
 import java.io.BufferedWriter
@@ -42,10 +46,17 @@ fun main(args: Array<String>) {
     val file = path.resolve("analysis.csv")
     val writer = BufferedWriter(FileWriter(file.toFile(), true))
     writer.write("project," + metrics.joinToString(","))
+    writer.write(",RES_DRAWING,RES_LOOPS,RES_OO,RES_MESSAGEPASSING")
     writer.newLine()
     results.forEach {
         writer.write(it.first.fileName.toString() + ",")
         writer.write(metrics.joinToString(",") { metric -> it.second[metric]!!.toString() })
+
+        writer.write("," + DrawingReportRule.calculateFinal(it.second).toString())
+        writer.write("," + LoopReportRule.calculateFinal(it.second).toString())
+        writer.write("," + OoReportRule.calculateFinal(it.second).toString())
+        writer.write("," + MessagePassingReportRule.calculateFinal(it.second).toString())
+
         writer.newLine()
     }
     writer.close()
