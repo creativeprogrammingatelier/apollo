@@ -5,11 +5,11 @@
 		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <display-name>Atelier PMD Plugin</display-name>
+    <display-name>Atelier Apollo Plugin</display-name>
 
     <servlet>
         <servlet-name>Webhook</servlet-name>
-        <servlet-class>nl.utwente.atelier.pmd.server.Webhook</servlet-class>
+        <servlet-class>nl.utwente.apollo.server.Webhook</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Webhook</servlet-name>

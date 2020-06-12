@@ -10,7 +10,7 @@
 
     <rule name="DecentralizedDrawingRule"
           message="Do not use drawing method {0} in method {1}, {1} is called outside of the draw sequence and can therefore not contain drawing methods."
-          class="nl.utwente.processing.pmdrules.DecentralizedDrawingRule">
+          class="nl.utwente.processing.pmd.rules.DecentralizedDrawingRule">
         <description>
             Methods that draw on screen should only be called from drawing methods: methods that are (indirectly) called
             solely by the draw method.
@@ -29,7 +29,7 @@
 
     <rule name="DrawingStateChangeRule"
           message="Do not change global variable {0} from method {1}, {1} is part of the draw sequence."
-          class="nl.utwente.processing.pmdrules.DrawingStateChangeRule">
+          class="nl.utwente.processing.pmd.rules.DrawingStateChangeRule">
         <description>
             Global variables of the sketch should not be changed from the draw method or methods (indirectly) called
             from the draw method.
@@ -53,7 +53,7 @@
 
     <rule name="DecentralizedEventHandlingRule"
           message="Do not use global event variable {0} in method {1}, as {1} is not one of the event handling methods."
-          class="nl.utwente.processing.pmdrules.DecentralizedEventHandlingRule">
+          class="nl.utwente.processing.pmd.rules.DecentralizedEventHandlingRule">
         <description>
             Global event handling variables should only be used inside the specified event handler methods.
         </description>
@@ -70,7 +70,7 @@
 
     <rule name="PixelHardcodeIgnoranceRule"
           message="Do not use literals for pixels for {0} inside method {1}."
-          class="nl.utwente.processing.pmdrules.PixelHardcodeIgnoranceRule">
+          class="nl.utwente.processing.pmd.rules.PixelHardcodeIgnoranceRule">
         <description>
             Drawing functions should not use pixels, but constants or variables instead.
         </description>
@@ -87,7 +87,7 @@
 
     <rule name="StatelessClassRule"
           message="Class {0} does not declare any fields. Decide if any of the global variables belong here, or alternatively if these methods belong to some other class."
-          class="nl.utwente.processing.pmdrules.StatelessClassRule">
+          class="nl.utwente.processing.pmd.rules.StatelessClassRule">
         <description>
             Stateless classes are not allowed. Utility classes with only methods should define their methods in the
             top class (global scope).
@@ -107,7 +107,7 @@
 
     <rule name="LongMethodRule"
           message="The method {0} is too long, {1} lines of code are counted. The method should be made more efficient, split in multiple methods, or responsibilty should be delegated to other objects/classes."
-          class="nl.utwente.processing.pmdrules.LongMethodRule">
+          class="nl.utwente.processing.pmd.rules.LongMethodRule">
         <description>
             Methods longer than a certain amount of rules (50 by default) should be split into separate method calls.
         </description>
@@ -150,7 +150,7 @@
 
     <rule name="LongParameterListRule"
           message="The method {0} has too many parameters, {1} are counted. The parameters should be merged into objects or the method should be split."
-          class="nl.utwente.processing.pmdrules.LongParameterListRule">
+          class="nl.utwente.processing.pmd.rules.LongParameterListRule">
         <description>
             Methods should not accept too many parameters.
         </description>
@@ -169,7 +169,7 @@
 
     <rule name="GodClassRule"
           message="The class {0} has too much responsibility. The program design should be reconsidered."
-          class="nl.utwente.processing.pmdrules.GodClassRule">
+          class="nl.utwente.processing.pmd.rules.GodClassRule">
         <description>
             Classes should not become a God Class, e.g. they should not take total responsibility for the whole application.
         </description>

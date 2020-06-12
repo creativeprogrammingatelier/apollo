@@ -7,11 +7,11 @@
         Rulesets that report metrics
     </description>
 
-    <rule ref="rulesets/processing.xml" />
+    <rule ref="rulesets/processing.xml"/>
 
     <rule name="DrawingReportRule"
           message="{0}={1}"
-          class="nl.utwente.processing.pmdrules.metrics.drawing.DrawingReportRule">
+          class="nl.utwente.apollo.pmd.drawing.DrawingReportRule">
         <description>
             Called drawing methods.
         </description>
@@ -20,7 +20,7 @@
 
     <rule name="LoopReportRule"
           message="{0}={1}"
-          class="nl.utwente.processing.pmdrules.metrics.loops.LoopReportRule">
+          class="nl.utwente.apollo.pmd.loops.LoopReportRule">
         <description>
             Loops.
         </description>
@@ -29,7 +29,7 @@
 
     <rule name="OoReportRule"
           message="{0}={1}"
-          class="nl.utwente.processing.pmdrules.metrics.oo.OoReportRule">
+          class="nl.utwente.apollo.pmd.oo.OoReportRule">
         <description>
             OO.
         </description>
@@ -38,7 +38,7 @@
 
     <rule name="MessagePassingReportRule"
           message="{0}={1}"
-          class="nl.utwente.processing.pmdrules.metrics.messagepassing.MessagePassingReportRule">
+          class="nl.utwente.apollo.pmd.messagepassing.MessagePassingReportRule">
         <description>
             Message Passing.
         </description>
