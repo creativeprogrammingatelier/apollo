@@ -15,9 +15,6 @@ class DrawingMetrics {
         val advancedCoveredCategories = setOf(TRANSFORM)
         val uncoveredCategories = ProcessingAppletMethodCategory.values().toSet().minus(coveredCategories)
 
-        val coveredMethods = ProcessingApplet.DRAW_METHODS.filter { it.category in coveredCategories }
-        val uncoveredMethods = ProcessingApplet.DRAW_METHODS.filter { it.category in uncoveredCategories }
-
         fun getDrawCalls(node: ASTCompilationUnit) : Set<ProcessingAppletMethod> {
             return node.jjtAccept(DrawingCallVisitor(), mutableSetOf<ProcessingAppletMethod>())
                     as MutableSet<ProcessingAppletMethod>
@@ -34,7 +31,7 @@ class DrawingMetrics {
         }
 
         fun computeProbability(coveredDrawCalls: Double): Double {
-            return coveredDrawCalls / coveredMethods.size.toDouble()
+            return s(27748375.73, 8.22, coveredDrawCalls)
         }
     }
 
@@ -48,7 +45,7 @@ class DrawingMetrics {
         }
 
         fun computeProbability(advancedDrawCalls: Double): Double {
-            return s(70.0, 3.0, advancedDrawCalls)
+            return s(1.0, 4.25, advancedDrawCalls)
         }
     }
 
@@ -62,7 +59,7 @@ class DrawingMetrics {
         }
 
         fun computeProbability(uncoveredDrawCalls: Double): Double {
-            return uncoveredDrawCalls / uncoveredMethods.size.toDouble()
+            return s(0.05, 1.82, uncoveredDrawCalls)
         }
     }
 }

@@ -26,7 +26,7 @@ class OoMetrics {
         }
 
         fun computeProbability(count: Double): Double {
-            return s(1.0, 2.0, count)
+            return s(0.05, 1.82, count)
         }
     }
 
@@ -41,7 +41,7 @@ class OoMetrics {
         }
 
         fun computeProbability(classCount: Double, count: Double): Double {
-            return 1 / max(1.0, count / sqrt(classCount))
+            return s(0.11, -3.21, count / classCount)
         }
     }
 }

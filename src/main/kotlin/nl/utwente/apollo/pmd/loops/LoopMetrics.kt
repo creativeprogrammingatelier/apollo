@@ -25,7 +25,7 @@ class LoopMetrics {
         }
 
         fun computeProbability(loopTypeCount: Double): Double {
-            return return s(1.0, 3.0, loopTypeCount)
+            return s(0.05, 1.82, loopTypeCount)
         }
     }
 
@@ -54,7 +54,7 @@ class LoopMetrics {
         }
 
         fun computeProbability(situationCount: Double): Double {
-            return s(3.0, 1.5, situationCount)
+            return s(6.59, 2.64, situationCount)
         }
     }
 
