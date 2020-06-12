@@ -7,7 +7,7 @@ fun s(a: Double, b: Double, x: Double) : Double {
 }
 
 fun weightedAverage(vararg values: Pair<Double, Double?>) : Double {
-    return values.sumByDouble { it.second ?: 0.0 } / values.sumByDouble { it.first }
+    return values.sumByDouble { it.first * (it.second ?: 0.0) } / values.sumByDouble { it.first }
 }
 
 fun tryParseDescription(description: String): Pair<Metrics, Double>? {
