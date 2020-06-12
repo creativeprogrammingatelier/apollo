@@ -11,10 +11,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.BiPredicate
 import java.util.stream.Collectors
+import kotlin.math.roundToInt
 
 object Apollo {
-    fun verbalize(probability: Double): String {
-        return when {
+    fun verbalize(probability: Double, includeNumeral: Boolean = false): String {
+        val word = when {
             probability <= 0.20  -> "improbable"
             probability <= 0.375 -> "uncertain"
             probability <= 0.675 -> "fifty-fifty"
@@ -22,26 +23,31 @@ object Apollo {
             probability <= 0.95  -> "probable"
             else                 -> "almost certain"
         }
+
+        return if (includeNumeral)
+            word + " (" + (probability * 100.0).roundToInt() + "%)"
+        else
+            word
     }
 
-    fun formatResults(metrics: Map<Metrics, Double>): String {
+    fun formatResults(metrics: Map<Metrics, Double>, includeNumeral: Boolean = false): String {
         val s = StringBuilder()
         s.appendln("Based on this submission, Apollo thinks it is")
 
         s.append("- ")
-        s.append(verbalize(DrawingReportRule.calculateFinal(metrics)))
+        s.append(verbalize(DrawingReportRule.calculateFinal(metrics), includeNumeral))
         s.appendln(" that the student can write a program that uses graphical commands to draw to the screen")
 
         s.append("- ")
-        s.append(verbalize(LoopReportRule.calculateFinal(metrics)))
+        s.append(verbalize(LoopReportRule.calculateFinal(metrics), includeNumeral))
         s.appendln(" that the student can write a program that uses looping constructs for repetition")
 
         s.append("- ")
-        s.append(verbalize(OoReportRule.calculateFinal(metrics)))
+        s.append(verbalize(OoReportRule.calculateFinal(metrics), includeNumeral))
         s.appendln(" that the student can compose a program using classes, objects and methods to structure the code in an object-oriented way")
 
         s.append("- ")
-        s.append(verbalize(MessagePassingReportRule.calculateFinal(metrics)))
+        s.append(verbalize(MessagePassingReportRule.calculateFinal(metrics), includeNumeral))
         s.appendln(" that the student can implement message passing to enable communication between classes in a complex program")
 
         return s.toString()
@@ -70,6 +76,6 @@ fun main(args: Array<String>) {
     }
 
     println("\nConclusions:")
-    print(Apollo.formatResults(metrics))
+    print(Apollo.formatResults(metrics, true))
 }
 
