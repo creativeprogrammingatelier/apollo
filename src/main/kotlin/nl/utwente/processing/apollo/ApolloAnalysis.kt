@@ -36,6 +36,8 @@ fun main(args: Array<String>) {
             Metrics.LOOP_ASSESSMENT,
             Metrics.OO_RAW_CLASS_COUNT,
             Metrics.OO_RAW_SMELL_COUNT,
+            Metrics.MESSAGEPASSING_RAW_GLOBAL_COUNT,
+            Metrics.MESSAGEPASSING_RAW_PARAMETER_COUNT,
             Metrics.MESSAGEPASSING_RATIO)
 
     val file = path.resolve("analysis.csv")

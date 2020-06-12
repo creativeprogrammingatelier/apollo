@@ -7,16 +7,32 @@ import org.apache.commons.lang3.mutable.MutableInt
 
 class MessagePassingMetrics {
 
-    class RatioMetric : AbstractJavaMetric<ASTCompilationUnit>() {
+    class GlobalVariableMetric : AbstractJavaMetric<ASTCompilationUnit>() {
         override fun supports(node: ASTCompilationUnit): Boolean {
             return true
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
             val (_, globalVarUsageCount) = node.jjtAccept(GlobalVariableVisitor(), null) as Pair<Int, Int>
+            return globalVarUsageCount.toDouble()
+        }
+    }
+
+    class ParameterPassMetric : AbstractJavaMetric<ASTCompilationUnit>() {
+        override fun supports(node: ASTCompilationUnit): Boolean {
+            return true
+        }
+
+        override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
             val parameterPassCount = node.jjtAccept(ParameterPassingVisitor(), MutableInt(0)) as MutableInt
-            val total = parameterPassCount.value + globalVarUsageCount
-            return if (total == 0) 0.0 else parameterPassCount.value.toDouble() / total
+            return parameterPassCount.value.toDouble()
+        }
+    }
+
+    class RatioMetric {
+        fun compute(globalVarUsageCount: Double, parameterPassCount: Double): Double {
+            val total = parameterPassCount + globalVarUsageCount
+            return if (total == 0.0) 0.0 else parameterPassCount / total
         }
     }
 }

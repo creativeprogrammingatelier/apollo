@@ -15,7 +15,11 @@ class MessagePassingReportRule : AbstractJavaRule() {
     }
 
     override fun visit(node: ASTCompilationUnit, data: Any?): Any? {
-        val ratio = MessagePassingMetrics.RatioMetric().computeFor(node, null)
+        val globalVarCount = MessagePassingMetrics.GlobalVariableMetric().computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.MESSAGEPASSING_RAW_GLOBAL_COUNT, globalVarCount))
+        val parameterPassCount = MessagePassingMetrics.ParameterPassMetric().computeFor(node, null)
+        this.addViolationWithMessage(data, node, message, arrayOf(Metrics.MESSAGEPASSING_RAW_PARAMETER_COUNT, parameterPassCount))
+        val ratio = MessagePassingMetrics.RatioMetric().compute(globalVarCount, parameterPassCount)
         this.addViolationWithMessage(data, node, message, arrayOf(Metrics.MESSAGEPASSING_RATIO, ratio))
 
         return super.visit(node, data)
