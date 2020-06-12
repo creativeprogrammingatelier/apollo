@@ -1,11 +1,11 @@
 package nl.utwente.apollo.pmd.drawing
 
-import nl.utwente.processing.pmd.utils.*
-import nl.utwente.processing.pmd.symbols.ProcessingApplet
-
 import net.sourceforge.pmd.lang.java.ast.ASTPrimaryExpression
 import net.sourceforge.pmd.lang.java.ast.JavaParserVisitorAdapter
+import nl.utwente.processing.pmd.symbols.ProcessingApplet
 import nl.utwente.processing.pmd.symbols.ProcessingAppletMethod
+import nl.utwente.processing.pmd.utils.isMethodCall
+import nl.utwente.processing.pmd.utils.matches
 
 class DrawingCallVisitor() : JavaParserVisitorAdapter() {
     override fun visit(node: ASTPrimaryExpression, data: Any) : Any {

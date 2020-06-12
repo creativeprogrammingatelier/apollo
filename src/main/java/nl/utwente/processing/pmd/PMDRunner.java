@@ -1,16 +1,15 @@
 package nl.utwente.processing.pmd;
 
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.pmd.*;
+import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.util.ClasspathClassLoader;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.ReaderDataSource;
-import net.sourceforge.pmd.renderers.Renderer;
-
 import nl.utwente.processing.ProcessingProject;
+
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.List;
 
 /** Wrapper around PMD that allows for easy processing of projects */
 public class PMDRunner {

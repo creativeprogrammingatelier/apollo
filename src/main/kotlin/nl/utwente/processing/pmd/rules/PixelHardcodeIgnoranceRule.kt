@@ -5,7 +5,9 @@ import net.sourceforge.pmd.lang.java.ast.ASTMethodDeclaration
 import net.sourceforge.pmd.lang.java.ast.ASTPrimaryExpression
 import net.sourceforge.pmd.lang.java.rule.AbstractJavaRule
 import nl.utwente.processing.pmd.symbols.ProcessingApplet
-import nl.utwente.processing.pmd.utils.*
+import nl.utwente.processing.pmd.utils.hasLiteralArguments
+import nl.utwente.processing.pmd.utils.isMethodCall
+import nl.utwente.processing.pmd.utils.matches
 
 /**
  * Class which implements the pixel hardcode ignorance smell as PMD rule.

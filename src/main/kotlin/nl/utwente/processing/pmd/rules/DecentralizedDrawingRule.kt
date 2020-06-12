@@ -7,7 +7,10 @@ import net.sourceforge.pmd.lang.java.ast.ASTPrimaryExpression
 import net.sourceforge.pmd.lang.java.rule.AbstractJavaRule
 import net.sourceforge.pmd.lang.java.symboltable.ClassScope
 import nl.utwente.processing.pmd.symbols.ProcessingApplet
-import nl.utwente.processing.pmd.utils.*
+import nl.utwente.processing.pmd.utils.findMethod
+import nl.utwente.processing.pmd.utils.isMethodCall
+import nl.utwente.processing.pmd.utils.matches
+import nl.utwente.processing.pmd.utils.uniqueCallStack
 
 /**
  * Class which implements the decentralized drawing smell as a PMD rule.

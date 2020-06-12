@@ -1,12 +1,12 @@
 package nl.utwente.apollo
 
 import nl.utwente.apollo.pmd.ApolloPMDRunner
-import nl.utwente.processing.ProcessingFile
-import nl.utwente.processing.ProcessingProject
 import nl.utwente.apollo.pmd.drawing.DrawingReportRule
 import nl.utwente.apollo.pmd.loops.LoopReportRule
 import nl.utwente.apollo.pmd.messagepassing.MessagePassingReportRule
 import nl.utwente.apollo.pmd.oo.OoReportRule
+import nl.utwente.processing.ProcessingFile
+import nl.utwente.processing.ProcessingProject
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.BiPredicate

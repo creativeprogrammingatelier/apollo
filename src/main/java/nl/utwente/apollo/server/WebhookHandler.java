@@ -1,5 +1,19 @@
 package nl.utwente.apollo.server;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import nl.utwente.atelier.api.AtelierAPI;
+import nl.utwente.atelier.exceptions.CryptoException;
+import nl.utwente.atelier.pmd.AtelierPMDRenderer;
+import nl.utwente.processing.ProcessingFile;
+import nl.utwente.processing.ProcessingProject;
+import nl.utwente.processing.pmd.PMDException;
+import nl.utwente.processing.pmd.PMDRunner;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -7,22 +21,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.*;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import nl.utwente.atelier.api.AtelierAPI;
-import nl.utwente.processing.pmd.PMDException;
-
-import nl.utwente.atelier.exceptions.CryptoException;
-import nl.utwente.atelier.pmd.AtelierPMDRenderer;
-import nl.utwente.processing.ProcessingFile;
-import nl.utwente.processing.pmd.PMDRunner;
-import nl.utwente.processing.ProcessingProject;
 
 /** Handler for Webhook requests. It checks if the request is valid and handles supported events. */
 public class WebhookHandler {

@@ -1,21 +1,19 @@
 package nl.utwente.atelier.api;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.google.gson.JsonParser;
+import nl.utwente.apollo.server.Configuration;
+import nl.utwente.atelier.exceptions.CryptoException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.google.gson.JsonParser;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-
-import nl.utwente.atelier.exceptions.CryptoException;
-import nl.utwente.apollo.server.Configuration;
 
 /** Helper class for dealing with authentication for the Atelier API */
 public class Authentication {

@@ -1,5 +1,11 @@
 package nl.utwente.apollo.server;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import nl.utwente.atelier.api.utils.PemUtils;
+import nl.utwente.atelier.exceptions.ConfigurationException;
+import nl.utwente.atelier.exceptions.CryptoException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -8,13 +14,6 @@ import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import nl.utwente.atelier.api.utils.PemUtils;
-import nl.utwente.atelier.exceptions.ConfigurationException;
-import nl.utwente.atelier.exceptions.CryptoException;
 
 /** Configuration for Apollo, contains all environment-dependend settings */
 public class Configuration {

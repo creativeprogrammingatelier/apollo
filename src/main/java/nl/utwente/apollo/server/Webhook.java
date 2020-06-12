@@ -1,16 +1,16 @@
 package nl.utwente.apollo.server;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import javax.servlet.http.*;
-
 import nl.utwente.atelier.api.AtelierAPI;
 import nl.utwente.atelier.api.Authentication;
 import nl.utwente.atelier.exceptions.ConfigurationException;
 import nl.utwente.atelier.exceptions.CryptoException;
-
 import org.apache.http.impl.client.HttpClients;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /** Servlet for Webhook requests, entrypoint of the application */
 public class Webhook extends HttpServlet {

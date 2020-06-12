@@ -1,8 +1,8 @@
 package nl.utwente.atelier.api;
 
 import com.google.gson.JsonObject;
-import nl.utwente.atelier.exceptions.CryptoException;
 import nl.utwente.apollo.server.Configuration;
+import nl.utwente.atelier.exceptions.CryptoException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

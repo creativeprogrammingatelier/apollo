@@ -1,21 +1,19 @@
 package nl.utwente.atelier.pmd;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer;
+import nl.utwente.atelier.api.AtelierAPI;
+import nl.utwente.atelier.exceptions.CryptoException;
+import nl.utwente.processing.LineInFile;
+import nl.utwente.processing.ProcessingProject;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer;
-
-import nl.utwente.atelier.api.AtelierAPI;
-import nl.utwente.atelier.exceptions.CryptoException;
-import nl.utwente.processing.LineInFile;
-import nl.utwente.processing.ProcessingProject;
 
 /** PMD violation and error renderer that submits comments to Atelier */
 public class AtelierPMDRenderer extends AbstractIncrementingRenderer {
