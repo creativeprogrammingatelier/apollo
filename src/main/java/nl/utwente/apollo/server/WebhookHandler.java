@@ -3,14 +3,13 @@ package nl.utwente.apollo.server;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.utwente.apollo.Apollo;
+import nl.utwente.apollo.JsonStorage;
 import nl.utwente.apollo.pmd.ApolloPMDRunner;
 import nl.utwente.atelier.api.AtelierAPI;
 import nl.utwente.atelier.exceptions.CryptoException;
-import nl.utwente.atelier.pmd.AtelierPMDRenderer;
 import nl.utwente.processing.ProcessingFile;
 import nl.utwente.processing.ProcessingProject;
 import nl.utwente.processing.pmd.PMDException;
-import nl.utwente.processing.pmd.PMDRunner;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -21,7 +20,6 @@ import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,11 +27,13 @@ import java.util.stream.StreamSupport;
 public class WebhookHandler {
     private final String webhookSecret;
     private final AtelierAPI api;
+    private final JsonStorage storage;
     private final ApolloPMDRunner pmd = new ApolloPMDRunner();
 
-    public WebhookHandler(Configuration config, AtelierAPI api) {
+    public WebhookHandler(Configuration config, AtelierAPI api, JsonStorage storage) {
         this.webhookSecret = config.getWebhookSecret();
         this.api = api;
+        this.storage = storage;
     }
 
     /** Indicates that the request is not valid due to the given reason */
@@ -140,6 +140,9 @@ public class WebhookHandler {
             var project = new ProcessingProject(files);
 
             var metrics = pmd.run(project);
+
+            storage.storeSubmissionResults(submissionID, metrics);
+
             var message =
                     Apollo.formatResults(metrics, false)
                     + "\nPlease reply with +1 if you think this is correct, or -1 if you don't. If you have time, please explain why!";

@@ -26,6 +26,7 @@ public class Configuration {
     private final String webhookSecret;
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
+    private final String storageLocation;
 
     /**
      * Create a new configuration
@@ -34,14 +35,16 @@ public class Configuration {
      * @param webhookSecret a secret that Atelier uses to sign the webhook requests
      * @param publicKey the public key of this application, used for initial authentication
      * @param privateKey the private key corresponding with the public key
+     * @param storageLocation location where metrics data will be stored as json files
      */
     private Configuration(String atelierHost, String atelierPluginUserID, String webhookSecret, PublicKey publicKey,
-            PrivateKey privateKey) {
+                          PrivateKey privateKey, String storageLocation) {
         this.atelierHost = atelierHost;
         this.atelierPluginUserID = atelierPluginUserID;
         this.webhookSecret = webhookSecret;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
+        this.storageLocation = storageLocation;
     }
 
     private static String getProp(String value, String field) throws ConfigurationException {
@@ -114,8 +117,8 @@ public class Configuration {
             getJsonProp(config, "atelierPluginUserID"), 
             getJsonProp(config, "webhookSecret"), 
             keyPair.getPublic(),
-            keyPair.getPrivate()
-        );
+            keyPair.getPrivate(),
+            getJsonProp(config, "storageLocation"));
     }
 
     /** The URL of the connected Atelier instance */
@@ -141,5 +144,9 @@ public class Configuration {
     /** The private key corresponding to our public key */
     public PrivateKey getPrivateKey() {
         return privateKey;
+    }
+
+    public String getStorageLocation() {
+        return storageLocation;
     }
 }
