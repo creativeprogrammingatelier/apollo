@@ -101,6 +101,37 @@ fun ASTPrimaryExpression.hasLiteralArguments(method: ProcessingAppletMethod) : B
             .any { it != null && it.isLiteral() };
 }
 
+fun ASTPrimaryExpression.matchesBuiltinInstanceCall(method: ProcessingAppletMethod): Boolean {
+    var result = false;
+    check@ for (node in this.children()) {
+        when (node) {
+            // The primary prefix is usually the object reference and the method name, object.method
+            is ASTPrimaryPrefix -> {
+                if (node.usesThisModifier() || node.usesSuperModifier()) {
+                    // If it uses this. or super., it is not a call to an instance method made from outside the class
+                    break@check
+                } else if(node.getFirstChildOfType(ASTName::class.java)?.image?.endsWith("." + method.name) != true) {
+                    // If the image doesn't end with .methodName, this is not a call to this method
+                    break@check
+                }
+                // Don't do the nameDeclaration check here, because it will also find the instance variable declaration
+            }
+            is ASTPrimarySuffix -> {
+                // The first prefix needs to be arguments and have the correct amount of them
+                // We don't do a type check, because PMD doesn't really have enough information to do
+                // that fully reliably
+                result = node.isArguments && node.argumentCount == method.parameters.size;
+                break@check
+            }
+        }
+    }
+    return result
+}
+
+fun ASTPrimaryExpression.matchesBuiltinInstanceCall(methods: Collection<ProcessingAppletMethod>): ProcessingAppletMethod? {
+    return methods.firstOrNull { this.matchesBuiltinInstanceCall(it) }
+}
+
 fun ASTPrimaryExpression.matches(method: ProcessingAppletMethod) : Boolean {
     var result = false;
     check@ for (node in this.children()) {

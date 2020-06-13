@@ -5,6 +5,7 @@ import nl.utwente.apollo.pmd.drawing.DrawingReportRule
 import nl.utwente.apollo.pmd.loops.LoopReportRule
 import nl.utwente.apollo.pmd.messagepassing.MessagePassingReportRule
 import nl.utwente.apollo.pmd.oo.OoReportRule
+import nl.utwente.apollo.pmd.physics.PhysicsReportRule
 import nl.utwente.processing.ProcessingFile
 import nl.utwente.processing.ProcessingProject
 import java.nio.file.Files
@@ -49,6 +50,10 @@ object Apollo {
         s.append("- ")
         s.append(verbalize(MessagePassingReportRule.calculateFinal(metrics), includeNumeral))
         s.appendln(" that the student can implement message passing to enable communication between classes in a complex program")
+
+        s.append("- ")
+        s.append(verbalize(PhysicsReportRule.calculateFinal(metrics), includeNumeral))
+        s.appendln(" that the student can use elementary vector operations to simulate physical forces")
 
         return s.toString()
     }

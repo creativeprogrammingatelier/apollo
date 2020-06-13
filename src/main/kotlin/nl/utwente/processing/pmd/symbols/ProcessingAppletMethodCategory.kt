@@ -1,6 +1,7 @@
 package nl.utwente.processing.pmd.symbols
 
 enum class ProcessingAppletMethodCategory(val category: String) {
+    // Drawing
     SHAPE("Shape"),
     SHAPE_2D(SHAPE.name + " / 2D Primitives"),
     SHAPE_CURVES(SHAPE.name + " / Curves"),
@@ -26,5 +27,8 @@ enum class ProcessingAppletMethodCategory(val category: String) {
     TYPOGRAPHY("Typography"),
     TYPOGRAPHY_LD(TYPOGRAPHY.name + " / Loading & Displaying"),
     TYPOGRAPHY_ATTRIBUTES(TYPOGRAPHY.name + " / Attributes"),
-    TYPOGRAPHY_METRICS(TYPOGRAPHY.name + " / Metrics")
+    TYPOGRAPHY_METRICS(TYPOGRAPHY.name + " / Metrics"),
+
+    // Math
+    MATH("Math")
 }

@@ -14,6 +14,7 @@ object ProcessingApplet {
     val PARAM_PSHAPE = ProcessingAppletParameter("PShape", false)
     val PARAM_PIMAGE = ProcessingAppletParameter("PImage", false)
     val PARAM_PSHADER = ProcessingAppletParameter("PShader", false)
+    val PARAM_PVECTOR = ProcessingAppletParameter("PVector", false)
     val PARAM_PFONT = ProcessingAppletParameter("PFont", false)
     val PARAM_STRING = ProcessingAppletParameter("String", false)
     val PARAM_CHAR = ProcessingAppletParameter("char", false)
@@ -312,6 +313,25 @@ object ProcessingApplet {
             //MouseClicked handler: https://processing.org/reference/mouseClicked_.html
             "pushMatrix",
             "popMatrix"
+    )
+
+    val PVECTOR_INSTANCE_MODIFICATION_METHODS = setOf(
+            // http://processing.github.io/processing-javadocs/core/processing/core/PVector.html
+            ProcessingAppletMethod("add", listOf(PARAM_PVECTOR), MATH),
+            ProcessingAppletMethod("cross", listOf(PARAM_PVECTOR), MATH),
+            ProcessingAppletMethod("dist", listOf(PARAM_PVECTOR), MATH),
+            ProcessingAppletMethod("div", repeatedFloatParam(1, 0), MATH),
+            ProcessingAppletMethod("dot", listOf(PARAM_PVECTOR), MATH),
+            ProcessingAppletMethod("heading", listOf(), MATH),
+            ProcessingAppletMethod("lerp", listOf(PARAM_PVECTOR, PARAM_FLOAT_NON_PIXEL), MATH),
+            ProcessingAppletMethod("limit", repeatedFloatParam(1, 0), MATH),
+            ProcessingAppletMethod("mag", listOf(), MATH),
+            ProcessingAppletMethod("magSq", listOf(), MATH),
+            ProcessingAppletMethod("mult", repeatedFloatParam(1, 0), MATH),
+            ProcessingAppletMethod("normalize", listOf(), MATH),
+            ProcessingAppletMethod("rotate", repeatedFloatParam(1, 0), MATH),
+            ProcessingAppletMethod("setMag", repeatedFloatParam(1, 0), MATH),
+            ProcessingAppletMethod("sub", listOf(PARAM_PVECTOR), MATH)
     )
 
     val EVENT_METHOD_SIGNATURES = setOf(
