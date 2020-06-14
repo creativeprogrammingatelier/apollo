@@ -47,6 +47,7 @@
 
     <rule name="PhysicsReportRule"
           message="{0}={1}"
+          dfa="true"
           class="nl.utwente.apollo.pmd.physics.PhysicsReportRule">
         <description>
             Physics.

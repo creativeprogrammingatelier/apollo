@@ -6,9 +6,18 @@ import net.sourceforge.pmd.lang.metrics.MetricOptions
 import nl.utwente.apollo.s
 
 class PhysicsMetrics {
-    companion object {
-        fun getResults(node: ASTCompilationUnit): Int {
-            return node.jjtAccept(PVectorVisitor(), null) as Int
+    class PlansMetric : AbstractJavaMetric<ASTCompilationUnit>() {
+        override fun supports(node: ASTCompilationUnit): Boolean {
+            return true
+        }
+
+        override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
+            node.jjtAccept(PhysicsDataFlowVisitor(), null)
+            return 0.0
+        }
+
+        fun computeProbability(operationCount: Double): Double {
+            return s(0.3, 3.0, operationCount)
         }
     }
 
@@ -18,7 +27,7 @@ class PhysicsMetrics {
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            return getResults(node).toDouble()
+            return (node.jjtAccept(PVectorVisitor(), null) as Int).toDouble()
         }
 
         fun computeProbability(operationCount: Double): Double {

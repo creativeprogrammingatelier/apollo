@@ -23,7 +23,7 @@ class PVectorVisitor : JavaParserVisitorAdapter() {
         }
 
         val Node.isVariableDeclaration
-            get() = this is ASTFieldDeclaration || this is ASTLocalVariableDeclaration
+            get() = this is ASTFieldDeclaration || this is ASTLocalVariableDeclaration || this is ASTFormalParameter
 
         val Node.isPVectorDeclaration: Boolean
             get() {
@@ -38,12 +38,16 @@ class PVectorVisitor : JavaParserVisitorAdapter() {
             }
 
         fun Scope.getPVectorDeclarations(): Map<NameDeclaration, List<NameOccurrence>> {
+            // TODO: method parameters are not variable declarations, according to PMD, so they won't show up here
             return this.filterDeclarationsRecursive { it.node.parent.parent.isVariableDeclaration && it.node.parent.parent.isPVectorDeclaration }
         }
 
         val Node.isInDrawCall: Boolean
             get() = this.getParentsOfType(ASTPrimaryExpression::class.java)
                     .any { it.isMethodCall && it.matches(*ProcessingApplet.DRAW_METHODS.toTypedArray()) != null }
+
+        val Node.indexInBlock
+            get() = this.getFirstParentOfType(ASTBlockStatement::class.java)?.indexInParent ?: -1
     }
 
     override fun visit(node: ASTCompilationUnit, data: Any?): Any? {
@@ -56,7 +60,18 @@ class PVectorVisitor : JavaParserVisitorAdapter() {
                     it.first.location.getFirstParentOfType(ASTPrimaryExpression::class.java)
                     ?.matchesBuiltinInstanceCall(ProcessingApplet.PVECTOR_INSTANCE_MODIFICATION_METHODS) != null }
                 .count()
-        val blocks = uses.groupBy { it.first.location.getFirstParentOfType(ASTBlock::class.java) }
+//        val blocks = uses
+//                .groupBy { it.first.location.getFirstParentOfType(ASTBlock::class.java) }
+//                .filterKeys { it != null }
+//                .mapValues { it.value.sortedWith(Comparator { a, b ->
+//                    val index = a.first.location.indexInBlock.compareTo(b.first.location.indexInBlock)
+//                    val line = a.first.location.beginLine.compareTo(b.first.location.beginLine)
+//                    when {
+//                        index != 0 -> index
+//                        line != 0 -> line
+//                        else -> b.first.location.beginColumn.compareTo(a.first.location.beginColumn)
+//                    }
+//                }) }
         // TODO: plan detection
         return super.visit(node, operationCount)
     }
