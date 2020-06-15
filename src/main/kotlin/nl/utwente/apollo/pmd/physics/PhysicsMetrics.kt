@@ -44,7 +44,7 @@ class PhysicsMetrics {
         }
 
         fun computeProbability(operationCount: Double): Double {
-            return s(3.59, 1.74, operationCount)
+            return s(45.5, 3.48, operationCount)
         }
     }
 }

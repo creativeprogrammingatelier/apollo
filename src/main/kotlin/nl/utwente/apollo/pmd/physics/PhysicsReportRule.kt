@@ -10,8 +10,8 @@ class PhysicsReportRule : AbstractJavaRule() {
     companion object {
         fun calculateFinal(metrics: Map<Metrics, Double>): Double {
             return weightedAverage(
-                    Pair(3.0, metrics[Metrics.PHYSICS_RECOGNIZED_PLANS]),
-                    Pair(1.0, metrics[Metrics.PHYSICS_PVECTOR_OPS])
+                    Pair(1.0, metrics[Metrics.PHYSICS_RECOGNIZED_PLANS]),
+                    Pair(2.5, metrics[Metrics.PHYSICS_PVECTOR_OPS])
             )
         }
     }
