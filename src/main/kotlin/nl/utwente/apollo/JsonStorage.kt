@@ -6,6 +6,10 @@ import java.nio.file.Path
 
 class JsonStorage(val storagePath: Path) {
 
+    init {
+        Files.createDirectories(storagePath)
+    }
+
     fun storeSubmissionResults(submissionId: String, metrics: Map<Metrics, Double>) {
         val json = JsonObject()
         json.addProperty("submissionId", submissionId)
