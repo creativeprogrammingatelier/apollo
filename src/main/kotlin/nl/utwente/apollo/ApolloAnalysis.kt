@@ -5,6 +5,7 @@ import nl.utwente.apollo.pmd.drawing.DrawingReportRule
 import nl.utwente.apollo.pmd.loops.LoopReportRule
 import nl.utwente.apollo.pmd.messagepassing.MessagePassingReportRule
 import nl.utwente.apollo.pmd.oo.OoReportRule
+import nl.utwente.apollo.pmd.physics.PhysicsReportRule
 import nl.utwente.processing.ProcessingFile
 import nl.utwente.processing.ProcessingProject
 import java.io.BufferedWriter
@@ -41,12 +42,14 @@ fun main(args: Array<String>) {
             Metrics.OO_RAW_SMELL_COUNT,
             Metrics.MESSAGEPASSING_RAW_GLOBAL_COUNT,
             Metrics.MESSAGEPASSING_RAW_PARAMETER_COUNT,
-            Metrics.MESSAGEPASSING_RATIO)
+            Metrics.MESSAGEPASSING_RATIO,
+            Metrics.PHYSICS_RAW_PVECTOR_OP_COUNT,
+            Metrics.PHYSICS_RAW_RECOGNIZED_PLAN_COUNT)
 
     val file = path.resolve("analysis.csv")
     val writer = BufferedWriter(FileWriter(file.toFile(), true))
     writer.write("project," + metrics.joinToString(","))
-    writer.write(",RES_DRAWING,RES_LOOPS,RES_OO,RES_MESSAGEPASSING")
+    writer.write(",RES_DRAWING,RES_LOOPS,RES_OO,RES_MESSAGEPASSING,RES_PHYSICS")
     writer.newLine()
     results.forEach {
         writer.write(it.first.fileName.toString() + ",")
@@ -56,6 +59,7 @@ fun main(args: Array<String>) {
         writer.write("," + LoopReportRule.calculateFinal(it.second).toString())
         writer.write("," + OoReportRule.calculateFinal(it.second).toString())
         writer.write("," + MessagePassingReportRule.calculateFinal(it.second).toString())
+        writer.write("," + PhysicsReportRule.calculateFinal(it.second).toString())
 
         writer.newLine()
     }
