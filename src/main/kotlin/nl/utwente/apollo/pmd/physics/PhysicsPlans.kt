@@ -9,20 +9,32 @@ import nl.utwente.apollo.pmd.physics.PhysicsAtom.*
 import nl.utwente.processing.pmd.utils.isMethodCall
 
 object PhysicsPlans {
-    private val applyAcceleration = PhysicsPlan("Apply acceleration",
-            setOf(PVectorMethod("velocity", "add", PVector("acceleration"))),
-            setOf(PVectorMethod("position", "add", PVector("velocity"))))
+    val plans = listOf(
+            PhysicsPlan("Apply acceleration",
+                    setOf(PVectorMethod("velocity", "add", PVector("acceleration"))),
+                    setOf(PVectorMethod("position", "add", PVector("velocity")))),
 
-    private val applyForce = PhysicsPlan("Apply force",
-            setOf(PVectorMethod("force", "div", Float("mass"))),
-            setOf(PVectorMethod("acceleration", "add", PVector("force"))))
+            PhysicsPlan("Apply force with mass",
+                    setOf(PVectorMethod("force", "div", Float("mass"))),
+                    setOf(PVectorMethod("acceleration", "add", PVector("force")))),
 
-    private val airDrag = PhysicsPlan("Calculate air drag",
-            setOf(PVectorMethod("velocity", "mag"), PVectorMethod("velocity", "get")),
-            setOf(PVectorMethod("drag", "mult", Int("neg1")), PVectorMethod("drag", "normalize")),
-            setOf(PVectorMethod("drag", "mult", Float("dragMag"))))
+            PhysicsPlan("Calculate air resistance",
+                    setOf(PVectorMethod("velocity", "mag"), PVectorMethod("velocity", "get")),
+                    setOf(PVectorMethod("drag", "mult", Int("neg1")), PVectorMethod("drag", "normalize")),
+                    setOf(PVectorMethod("drag", "mult", Float("dragMag")))),
 
-    val plans = listOf(applyForce, applyAcceleration, airDrag)
+            PhysicsPlan("Calculate friction",
+                    setOf(PVectorMethod("velocity", "get")),
+                    setOf(PVectorMethod("friction", "mult", Int("neg1")), PVectorMethod("friction", "normalize")),
+                    setOf(PVectorMethod("friction", "mult", Float("frictionCoeff")))),
+
+            PhysicsPlan("Calculate gravitational attraction",
+                    setOf(PVectorMethod("myLocation", "sub", PVector("otherLocation"))),
+                    setOf(PVectorMethod("force", "mag")),
+                    setOf(PVectorMethod("force", "normalization")),
+                    setOf(PVectorMethod("force", "mult", Float("strength"))))
+    )
+
 
     fun getMatchingPlans(operations: List<ASTPrimaryExpression>, pVectorUses: List<Pair<NameOccurrence, NameDeclaration>>): List<PhysicsPlan> {
         return plans.filter { it.matches(operations, pVectorUses) }
