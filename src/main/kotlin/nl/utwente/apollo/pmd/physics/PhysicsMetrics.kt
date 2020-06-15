@@ -17,7 +17,7 @@ class PhysicsMetrics {
         }
 
         fun computeProbability(operationCount: Double): Double {
-            return s(0.3, 3.0, operationCount)
+            return s(0.43, 3.03, operationCount)
         }
     }
 
@@ -31,7 +31,7 @@ class PhysicsMetrics {
         }
 
         fun computeProbability(operationCount: Double): Double {
-            return s(0.3, 3.0, operationCount)
+            return s(3.59, 1.74, operationCount)
         }
     }
 }
