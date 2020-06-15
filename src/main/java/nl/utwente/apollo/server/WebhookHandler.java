@@ -145,7 +145,9 @@ public class WebhookHandler {
 
             var message =
                     Apollo.formatResults(metrics, false)
-                    + "\nPlease reply with +1 if you think this is correct, or -1 if you don't. If you have time, please explain why!";
+                    + "\nPlease reply with +1 if you think Apollo is correct, or -1 if you don't. If you have time, please explain why!"
+                    + "\n\nApollo is a research project that gives teachers and TAs insight into a student's ability to apply explained concepts in their code. "
+                    + "By replying, you help us improve Apollo in the future. Thanks for helping out! - @Arthur Rump";
 
             var comment = new JsonObject();
 
