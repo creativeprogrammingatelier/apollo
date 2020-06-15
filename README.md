@@ -1,20 +1,23 @@
-# Atelier-PMD
+# Apollo
 
-This project integrates a version of [PMD](https://pmd.github.io/) designed to work with the Processing language into the [Atelier](https://github.com/creativeprogrammingatelier/atelier) system. The [PMD rules for Processing](https://github.com/ZITA4PDE/ProcessingPMD) used in this project are developed by Remco de Man and described in [this paper](https://doi.org/10.5220/0006701704200431). The conversion from Processing code to the Java code checked by PMD is written by Tim Blok for his [Zita](https://github.com/swordiemen/zita/) project, which is described in [this paper](http://purl.utwente.nl/essays/77948).
+Apollo is a system for automatically assessing student's mastery of learning outcomes by looking at the code they write. This version of Apollo is built to assess Processing projects and the learning goals are adapted to the Creative Technology program at the University of Twente. Apollo integrates into [Atelier](https://github.com/creativeprogrammingatelier/atelier) to provide teachers and teaching assistants with direct feedback on uploaded programs.
 
-Atelier-PMD provides two modes of operation: it accepts full projects, or single files. In normal use the full project mode is recommended, the single file mode is there as an historical artifact. The mode of operation is chosen when configuring the plugin in Atelier, where you can choose the webhooks to subscribe to. Choosing `submission` will send projects to Atelier-PMD as a single project, whereas `submission.file` sends all the files separately. Please note that enabling both webhooks results in a duplication of all comments made by Atelier-PMD.
+This project is based on [Atelier-PMD](https://github.com/creativeprogrammingatelier/atelier-PMD). The [PMD rules for Processing](https://github.com/ZITA4PDE/ProcessingPMD) used in this project are developed by Remco de Man and described in [this paper](https://doi.org/10.5220/0006701704200431). The conversion from Processing code to the Java code checked by PMD is written by Tim Blok for his [Zita](https://github.com/swordiemen/zita/) project, which is described in [this paper](http://purl.utwente.nl/essays/77948).
+
+Apollo only supports the `submission` hook for Atelier.
 
 ## Configuration
 
 This project exposes a single API endpoint, namely a webhook to integrate with the Atelier system. To use the system, it needs to know about your instance of Atelier and this application has to be registered with Atelier as a plugin.
 
-Configuration of Atelier-PMD is done using a JSON configuration file, an example of which is located in the `config/` folder. The location of the configuration file is set using the `ATELIER_PMD_CONFIG` environment variable. This configuration file contains all information the system needs to run as a plugin for Atelier:
+Configuration of Atelier-PMD is done using a JSON configuration file, an example of which is located in the `config/` folder. The location of the configuration file is set using the `APOLLO_CONFIG` environment variable. This configuration file contains all information the system needs to run as a plugin for Atelier:
 
 - `atelierHost`: the url of your Atelier instance, without a trailing /
 - `atelierPluginUserID`: the user ID you get in Atelier once you have registered the system as a plugin
 - `webhookSecret`: a secret that Atelier will use to sign the webhook requests. Make sure that the value provided here is the same as the value configured in Atelier
 - `publicKey`: the public key of this application, used for initial authentication
 - `privateKey`: the private key corresponding with the public key
+- `storageLocation`: file path for storing information about processed submissions
 
 For each of these it is possible to get the values from an environment variable or a file on disk. To configure the host using an environment variable, use the following configuration:
 
@@ -32,19 +35,19 @@ If you specify a file path for the `publicKey` and `privateKey` variables and th
 
 ## Running with Docker
 
-You can build the Docker image for Atelier-PMD using the `docker build` command:
+You can build the Docker image for Apollo using the `docker build` command:
 
 ```sh
 docker build . -t atelier-pmd
 ```
 
-The image exposes one volume in which you have to provide your configuration: `/atelier-pmd/config`. By default the configuration inside the container is called `production.json`, but you can override it by setting the `ATELIER_PMD_CONFIG` environment variable. The Tomcat server is exposed on port 8080, and the Atelier-PMD application can be reached under the `/atelier-pmd` path.
+The image exposes one volume in which you have to provide your configuration: `/atelier-pmd/config`. By default the configuration inside the container is called `production.json`, but you can override it by setting the `APOLLO_CONFIG` environment variable. The Tomcat server is exposed on port 8080, and the Atelier-PMD application can be reached under the `/atelier-pmd` path.
 
 ## Debugging in IntelliJ
 
-To debug Atelier-PMD in IntelliJ, you'll need to configure a Tomcat server in the *Run/Debug Configurations*. First create a new *Local Tomcat Server* configuration, and configure it to use your local Tomcat installation. Then you need to add the project to the server: go to the *Deployment* tab and add the `atelier-pmd:war exploded` artifact. Change the *Application context* to `/` to run the application at the root of the server. 
+To debug Apollo in IntelliJ, you'll need to configure a Tomcat server in the *Run/Debug Configurations*. First create a new *Local Tomcat Server* configuration, and configure it to use your local Tomcat installation. Then you need to add the project to the server: go to the *Deployment* tab and add the `apollo:war exploded` artifact. Change the *Application context* to `/` to run the application at the root of the server. 
 
-You also need to make sure you have a valid configuration for Atelier-PMD: copy the `config/example.json` to `config/development.json` and change it to reflect your local environment. Then in the *Startup/Connection* tab you need to set the `ATELIER_PMD_CONFIG` to the full path to this `development.json` file. Make sure to do this for both the *Run* and *Debug* configurations.
+You also need to make sure you have a valid configuration for Apollo: copy the `config/example.json` to `config/development.json` and change it to reflect your local environment. Then in the *Startup/Connection* tab you need to set the `APOLLO_CONFIG` to the full path to this `development.json` file. Make sure to do this for both the *Run* and *Debug* configurations.
 
 You can now start debugging the application by starting the Tomcat configuration.
 

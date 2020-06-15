@@ -80,13 +80,13 @@ public class Configuration {
 
     /** 
      * Read the configuration JSON file from the file location specified by the 
-     * ATELIER_PMD_CONFIG environment variable 
+     * APOLLO_CONFIG environment variable 
      */
     public static Configuration readFromFile()
             throws ConfigurationException, CryptoException, IOException, URISyntaxException {
-        var env = System.getenv("ATELIER_PMD_CONFIG");
+        var env = System.getenv("APOLLO_CONFIG");
         if (env == null) 
-            throw new ConfigurationException("No configuration file set. Please set the ATELIER_PMD_CONFIG " +
+            throw new ConfigurationException("No configuration file set. Please set the APOLLO_CONFIG " +
                 "environment variable to the path of your configuration file.");
         return readFromFile(Path.of(env));
     }

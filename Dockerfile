@@ -2,7 +2,7 @@
 # Using Maven on OpenJDK 11
 FROM maven:3-jdk-11 AS build
 
-WORKDIR /atelier-pmd
+WORKDIR /apollo
 
 # Copy pom and all source files
 COPY pom.xml ./
@@ -16,9 +16,9 @@ RUN mvn package -B
 FROM tomcat:9-jdk11 AS release
 
 # Set default configuration location
-ENV ATELIER_PMD_CONFIG=/atelier-pmd/config/production.json
+ENV APOLLO_CONFIG=/apollo/config/production.json
 # Expose volume so it can be set
-VOLUME /atelier-pmd/config
+VOLUME /apollo/config
 
 # Copy .war from the build stage
-COPY --from=build /atelier-pmd/target/atelier-pmd.war webapps/
+COPY --from=build /apollo/target/apollo.war webapps/
