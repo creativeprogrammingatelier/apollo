@@ -315,13 +315,14 @@ object ProcessingApplet {
             "popMatrix"
     )
 
-    val PVECTOR_INSTANCE_MODIFICATION_METHODS = setOf(
+    val PVECTOR_INSTANCE_METHODS = setOf(
             // http://processing.github.io/processing-javadocs/core/processing/core/PVector.html
             ProcessingAppletMethod("add", listOf(PARAM_PVECTOR), MATH),
             ProcessingAppletMethod("cross", listOf(PARAM_PVECTOR), MATH),
             ProcessingAppletMethod("dist", listOf(PARAM_PVECTOR), MATH),
             ProcessingAppletMethod("div", repeatedFloatParam(1, 0), MATH),
             ProcessingAppletMethod("dot", listOf(PARAM_PVECTOR), MATH),
+            ProcessingAppletMethod("get", listOf(), MATH),
             ProcessingAppletMethod("heading", listOf(), MATH),
             ProcessingAppletMethod("lerp", listOf(PARAM_PVECTOR, PARAM_FLOAT_NON_PIXEL), MATH),
             ProcessingAppletMethod("limit", repeatedFloatParam(1, 0), MATH),

@@ -6,14 +6,27 @@ import net.sourceforge.pmd.lang.metrics.MetricOptions
 import nl.utwente.apollo.s
 
 class PhysicsMetrics {
+    companion object {
+        fun getResults(node: ASTCompilationUnit): Pair<Int, Int> {
+            return node.jjtAccept(PVectorVisitor(), null) as Pair<Int, Int>
+        }
+
+        fun getOpsCount(node: ASTCompilationUnit): Int {
+            return getResults(node).first
+        }
+
+        fun getPlanMatchCount(node: ASTCompilationUnit): Int {
+            return getResults(node).second
+        }
+    }
+
     class PlansMetric : AbstractJavaMetric<ASTCompilationUnit>() {
         override fun supports(node: ASTCompilationUnit): Boolean {
             return true
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            node.jjtAccept(PhysicsDataFlowVisitor(), null)
-            return 0.0
+            return getPlanMatchCount(node).toDouble()
         }
 
         fun computeProbability(operationCount: Double): Double {
@@ -27,7 +40,7 @@ class PhysicsMetrics {
         }
 
         override fun computeFor(node: ASTCompilationUnit, options: MetricOptions?): Double {
-            return (node.jjtAccept(PVectorVisitor(), null) as Int).toDouble()
+            return getOpsCount(node).toDouble()
         }
 
         fun computeProbability(operationCount: Double): Double {

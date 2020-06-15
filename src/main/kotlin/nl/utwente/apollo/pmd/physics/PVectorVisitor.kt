@@ -55,24 +55,18 @@ class PVectorVisitor : JavaParserVisitorAdapter() {
         val mainClass = node.getFirstDescendantOfType(ASTClassOrInterfaceDeclaration::class.java)
         val pVectors = mainClass.scope.getPVectorDeclarations()
         val uses = pVectors.flatMap { it.value.map { v -> Pair(v, it.key) } }
-        val operationCount = uses
-                .filter {
-                    it.first.location.getFirstParentOfType(ASTPrimaryExpression::class.java)
-                    ?.matchesBuiltinInstanceCall(ProcessingApplet.PVECTOR_INSTANCE_MODIFICATION_METHODS) != null }
+        val operations = uses
+                .map { it.first.location.getFirstParentOfType(ASTPrimaryExpression::class.java) }
+                .filter { it?.matchesBuiltinInstanceCall(ProcessingApplet.PVECTOR_INSTANCE_METHODS) != null }
+
+        val planMatchCount = operations
+                .groupBy { it.getFirstParentOfType(ASTBlock::class.java) }
+                .filterKeys { it != null }
+                .values
+                .map { it.sortedBy { op -> op.indexInBlock } }
+                .flatMap { PhysicsPlans.getMatchingPlans(it, uses) }
                 .count()
-//        val blocks = uses
-//                .groupBy { it.first.location.getFirstParentOfType(ASTBlock::class.java) }
-//                .filterKeys { it != null }
-//                .mapValues { it.value.sortedWith(Comparator { a, b ->
-//                    val index = a.first.location.indexInBlock.compareTo(b.first.location.indexInBlock)
-//                    val line = a.first.location.beginLine.compareTo(b.first.location.beginLine)
-//                    when {
-//                        index != 0 -> index
-//                        line != 0 -> line
-//                        else -> b.first.location.beginColumn.compareTo(a.first.location.beginColumn)
-//                    }
-//                }) }
-        // TODO: plan detection
-        return super.visit(node, operationCount)
+
+        return super.visit(node, Pair(operations.count(), planMatchCount))
     }
 }
