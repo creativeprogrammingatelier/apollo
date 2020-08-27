@@ -153,6 +153,7 @@ public class WebhookHandler {
 
             comment.addProperty("submissionID", submissionID);
             comment.addProperty("visibility", "private");
+            comment.addProperty("automated", true);
             comment.addProperty("comment", message);
 
             var res = api.postProjectComment(submissionID, comment);
