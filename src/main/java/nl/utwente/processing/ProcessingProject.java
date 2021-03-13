@@ -26,8 +26,7 @@ public class ProcessingProject {
         code = START_JAVA_CODE + code + END_JAVA_CODE;
         code = code.replaceAll("\\bint\\s*\\(", "toInt(");
         code = code.replaceAll("\\bfloat\\s*\\(", "toFloat(");
-        code = code.replace(" = #", " = 0x");
-        code = code.replace("(#", "(0x");
+        code = code.replaceAll("#([0-9A-Fa-f]{3,4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})\\b", "0x$1");
         code = code.replaceAll("(?m)^\\s*import\\W(.)*;", "");
         return code;
     }
