@@ -39,7 +39,9 @@ fun main(args: Array<String>) {
                     val runner = ApolloPMDRunner()
                     Stream.of(Pair(it.first, runner.run(it.second)))
                 } catch (ex: Exception) {
-                    println("Error while running " + it.first + "\n  " + ex.message + "\n" + ex.stackTrace)
+                    println("Error while running " + it.first)
+                    ex.printStackTrace()
+                    println()
                     Stream.empty<Pair<String, Map<Metrics, Double>>>()
                 } }
 

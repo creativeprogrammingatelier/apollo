@@ -5,6 +5,7 @@ import net.sourceforge.pmd.renderers.AbstractIncrementingRenderer
 import nl.utwente.apollo.Metrics
 import nl.utwente.apollo.pmd.oo.OoMetrics
 import nl.utwente.apollo.tryParseDescription
+import nl.utwente.processing.pmd.PMDException
 import java.io.Writer
 
 class ApolloRenderer : AbstractIncrementingRenderer("Apollo", "") {
@@ -45,6 +46,10 @@ class ApolloRenderer : AbstractIncrementingRenderer("Apollo", "") {
     }
 
     override fun end() {
+        if (super.errors.isNotEmpty()) {
+            throw PMDException(super.errors.map { it.error })
+        }
+
         // Final calculations
         val ooSmellMetric = OoMetrics.SmellMetric()
         metrics[Metrics.OO_RAW_SMELL_COUNT] = ooSmellMetric.computeFor(violations)
