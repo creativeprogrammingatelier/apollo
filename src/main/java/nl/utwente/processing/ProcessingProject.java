@@ -28,7 +28,7 @@ public class ProcessingProject {
         code = code.replaceAll("\\bfloat\\s*\\(", "toFloat(");
         code = code.replace(" = #", " = 0x");
         code = code.replace("(#", "(0x");
-        code = code.replaceAll("import(.)*;", "");
+        code = code.replaceAll("(?m)^\\s*import\\W(.)*;", "");
         return code;
     }
 
