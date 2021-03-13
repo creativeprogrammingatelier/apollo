@@ -63,18 +63,18 @@ fun main(args: Array<String>) {
     val file = path.resolve("analysis.csv")
     Files.deleteIfExists(file)
     val writer = BufferedWriter(FileWriter(file.toFile(), true))
-    writer.write("project," + metrics.joinToString(","))
-    writer.write(",RES_DRAWING,RES_LOOPS,RES_OO,RES_MESSAGEPASSING,RES_PHYSICS")
+    writer.write("project;" + metrics.joinToString(";"))
+    writer.write(";RES_DRAWING;RES_LOOPS;RES_OO;RES_MESSAGEPASSING;RES_PHYSICS")
     writer.newLine()
     results.forEach {
-        writer.write(it.first + ",")
-        writer.write(metrics.joinToString(",") { metric -> it.second[metric]!!.toString() })
+        writer.write(it.first + ";")
+        writer.write(metrics.joinToString(";") { metric -> it.second[metric]!!.toString() })
 
-        writer.write("," + DrawingReportRule.calculateFinal(it.second).toString())
-        writer.write("," + LoopReportRule.calculateFinal(it.second).toString())
-        writer.write("," + OoReportRule.calculateFinal(it.second).toString())
-        writer.write("," + MessagePassingReportRule.calculateFinal(it.second).toString())
-        writer.write("," + PhysicsReportRule.calculateFinal(it.second).toString())
+        writer.write(";" + DrawingReportRule.calculateFinal(it.second).toString())
+        writer.write(";" + LoopReportRule.calculateFinal(it.second).toString())
+        writer.write(";" + OoReportRule.calculateFinal(it.second).toString())
+        writer.write(";" + MessagePassingReportRule.calculateFinal(it.second).toString())
+        writer.write(";" + PhysicsReportRule.calculateFinal(it.second).toString())
 
         writer.newLine()
     }
