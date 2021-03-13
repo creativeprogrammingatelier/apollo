@@ -12,8 +12,10 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.function.BiPredicate
 import java.util.stream.Collectors
+import java.util.stream.Stream
 
 fun main(args: Array<String>) {
     if (args.size < 1) {
@@ -21,15 +23,25 @@ fun main(args: Array<String>) {
         return
     }
 
-    val runner = ApolloPMDRunner()
 
     val path = Path.of(args[0])
-    val results = Files.find(path, 1, BiPredicate { p, attr -> attr.isDirectory && !p.equals(path) })
-            .map { folder -> Pair(folder, ProcessingProject(
-                    Files.find(folder, 6, BiPredicate { p, attr -> attr.isRegularFile && p.fileName.toString().endsWith(".pde") })
+    val isPdeFile = BiPredicate<Path, BasicFileAttributes>
+        { p, attr -> attr.isRegularFile && p.fileName.toString().endsWith(".pde") && !p.fileName.toString().startsWith(".") }
+    val isPdeFolder = BiPredicate<Path, BasicFileAttributes>
+        { p, attr -> attr.isDirectory && !p.equals(path) && !p.contains(Path.of("__MACOSX")) && Files.find(p, 1, isPdeFile).anyMatch({ _ -> true }) }
+    val results = Files.find(path, 6, isPdeFolder)
+            .map { folder -> Pair(path.relativize(folder).toString(), ProcessingProject(
+                    Files.find(folder, 6, isPdeFile)
                     .map {p -> ProcessingFile(p.fileName.toString(), p.fileName.toString(), Files.readString(p)) }
                     .collect(Collectors.toList())))}
-            .map { Pair(it.first, runner.run(it.second)) }
+            .flatMap {
+                try {
+                    val runner = ApolloPMDRunner()
+                    Stream.of(Pair(it.first, runner.run(it.second)))
+                } catch (ex: Exception) {
+                    println("Error while running " + it.first + "\n  " + ex.message + "\n" + ex.stackTrace)
+                    Stream.empty<Pair<String, Map<Metrics, Double>>>()
+                } }
 
     val metrics = listOf(
             Metrics.DRAWING_RAW_COVERED_COUNT,
@@ -47,12 +59,13 @@ fun main(args: Array<String>) {
             Metrics.PHYSICS_RAW_RECOGNIZED_PLAN_COUNT)
 
     val file = path.resolve("analysis.csv")
+    Files.deleteIfExists(file)
     val writer = BufferedWriter(FileWriter(file.toFile(), true))
     writer.write("project," + metrics.joinToString(","))
     writer.write(",RES_DRAWING,RES_LOOPS,RES_OO,RES_MESSAGEPASSING,RES_PHYSICS")
     writer.newLine()
     results.forEach {
-        writer.write(it.first.fileName.toString() + ",")
+        writer.write(it.first + ",")
         writer.write(metrics.joinToString(",") { metric -> it.second[metric]!!.toString() })
 
         writer.write("," + DrawingReportRule.calculateFinal(it.second).toString())
